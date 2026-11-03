@@ -1,0 +1,33 @@
+# Publishes to PyPI with Trusted Publishing. Manual only: run it after registering the
+# pending publisher on PyPI (project rulelab, workflow publish.yml, environment pypi).
+#
+# NOTE: PyPI rejects packages whose dependencies are direct URLs. rulelab depends on
+# commitarena from GitHub until commitarena is on PyPI; before running this workflow,
+# change that dependency in pyproject.toml to "commitarena==<version>" and re-lock.
+name: Publish to PyPI
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/rulelab
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Refuse direct URL dependencies (PyPI would reject them)
+        run: |
+          if grep -nE '@ ?git\+' pyproject.toml; then
+            echo "pyproject.toml still has a git dependency; switch it to the PyPI release first." >&2
+            exit 1
+          fi
+      - run: uv build
+      - uses: pypa/gh-action-pypi-publish@release/v1

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 160" width="880" height="160" role="img" aria-label="rulelab">
+  <style>
+    .name { fill: #111116; font: 700 64px Inter, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; letter-spacing: -2px; }
+    .tag { fill: #5c5d66; font: 400 20px Inter, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    @media (prefers-color-scheme: dark) { .name { fill: #f4f5f8; } .tag { fill: #a3a4ae; } }
+  </style>
+  <g transform="translate(8 24) scale(4.5)">
+    <rect x="1" y="1" width="22" height="22" rx="6" fill="#5d51d1"/>
+    <path d="M10 5.2v4.6l-3.6 6.9a1.2 1.2 0 0 0 1.1 1.8h9a1.2 1.2 0 0 0 1.1-1.8L14 9.8V5.2M8.9 5.2h6.2" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M8.3 14.3h7.4" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <text x="140" y="88" class="name">rulelab</text>
+  <text x="142" y="124" class="tag">Which lines of your AGENTS.md earn their tokens?</text>
+</svg>

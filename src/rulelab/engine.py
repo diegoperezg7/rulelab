@@ -119,6 +119,7 @@ class CommitarenaRunner:
         max_steps: int = 30,
         price: tuple[float, float] | None = None,
         tasks_source: str = "",
+        price_source: str | None = None,
     ) -> None:
         ca = _ca()
         try:
@@ -131,6 +132,12 @@ class CommitarenaRunner:
         self.inject = inject
         self.max_steps = max_steps
         self.tasks_source = tasks_source
+        if self.spec.is_local:
+            self.price_source = "local model, 0 USD"
+        elif price is not None:
+            self.price_source = price_source or "--price"
+        else:
+            self.price_source = "commitarena price table (docs.mistral.ai/inference/pricing, checked 2026-11-03)"
         self.budget = ca.Budget(max_cost=float("inf"))
         pin, pout = self.spec.unit_price() or (0.0, 0.0)
         self.price = (pin, pout)
@@ -153,6 +160,8 @@ class CommitarenaRunner:
             "hardware": hardware(),
             "price_in_per_mtok": self.price[0],
             "price_out_per_mtok": self.price[1],
+            "price_source": self.price_source,
+            "cost_method": "usage tokens of every model response x price per 1M tokens",
             "task_info": {
                 tid: {"repo": str(t.repo), "commit": t.commit, "date": t.date} for tid, t in self.tasks.items()
             },
@@ -241,6 +250,7 @@ def make_runner(
     inject: str = "both",
     max_steps: int = 30,
     price: tuple[float, float] | None = None,
+    price_source: str | None = None,
     check: bool = True,
 ) -> CommitarenaRunner:
     runner_probe = CommitarenaRunner([], model, price=price)  # validates the model id early
@@ -251,5 +261,12 @@ def make_runner(
     if not tasks:
         raise RulelabError("no tasks found", "Mine more commits (--max-tasks) or pass another --tasks-file.")
     return CommitarenaRunner(
-        tasks, model, context_name=context_name, inject=inject, max_steps=max_steps, price=price, tasks_source=source
+        tasks,
+        model,
+        context_name=context_name,
+        inject=inject,
+        max_steps=max_steps,
+        price=price,
+        tasks_source=source,
+        price_source=price_source,
     )

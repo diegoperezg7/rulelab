@@ -172,7 +172,9 @@ def run(
     max_cost: float = typer.Option(1.0, "--max-cost", min=0.0, help="Hard budget in USD. Local models count as 0."),
     inject: str = typer.Option("both", "--inject", help="Where the file goes: both (repo root + system prompt), repo or prompt."),
     max_steps: int = typer.Option(30, "--max-steps", min=1, help="Agent steps (model calls) per run."),
+    concurrency: int = typer.Option(1, "--concurrency", "-j", min=1, max=8, help="Agent runs at the same time (each in its own sandbox)."),
     price: Optional[str] = typer.Option(None, "--price", help="IN,OUT USD per 1M tokens for models without a known price."),
+    price_source: Optional[str] = typer.Option(None, "--price-source", help="Where --price comes from (shown in the report)."),
     out: Path = typer.Option(Path("rulelab-results"), "--out", "-o", help="Output directory."),
     resume: bool = typer.Option(False, "--resume", help="Continue an interrupted run in --out."),
     sessions: int = typer.Option(DEFAULT_SESSIONS_PER_MONTH, "--sessions-per-month", help="Agent sessions per month for the cost projection."),
@@ -198,6 +200,7 @@ def run(
             inject=inject,
             max_steps=max_steps,
             price=_parse_price(price),
+            price_source=price_source,
             check=not dry_run,
         )
         task_list = [t.strip() for t in only.split(",")] if only else None
@@ -260,7 +263,7 @@ def run(
 
     signal.signal(signal.SIGTERM, _term)
     try:
-        results = execute(plan, runner, results, results_path, max_cost, on_run=progress)
+        results = execute(plan, runner, results, results_path, max_cost, on_run=progress, concurrency=concurrency)
     except RulelabError as e:
         _fail(str(e), e.hint)
     a = analyze(results, sessions_per_month=sessions)

@@ -217,7 +217,7 @@ footer { border-top: 1px solid var(--border); padding: 20px 0 32px; font-size: 1
     <span>{{ t("Configurations", "Configuraciones") }} <b>{{ res.configs|length }}</b></span>
     <span>{{ t("Agent runs", "Ejecuciones") }} <b>{{ total_runs }}/{{ planned_runs }}</b></span>
     <span>{{ t("Split by", "Partido por") }} <b>{{ t(res.file.granularity, "sección" if res.file.granularity == "section" else "viñeta") }}</b></span>
-    <span>{{ t("Spent", "Gastado") }} <b class="num">{{ res.spent_usd|usd(4) }} USD</b></span>
+    <span>{{ t("Spent", "Gastado") }} <b class="num">{{ res.spent_usd|usd(4) }} USD</b>{% if res.meta.price_source %} <span title="{{ res.meta.cost_method }}">({{ res.meta.price_in_per_mtok }}/{{ res.meta.price_out_per_mtok }} USD {{ t("per 1M tokens in/out", "por 1M tokens entrada/salida") }}, {{ res.meta.price_source }})</span>{% endif %}</span>
     {% if res.meta.engine %}<span>{{ t("Engine", "Motor") }} <b>{{ res.meta.engine }}</b></span>{% endif %}
   </div>
 

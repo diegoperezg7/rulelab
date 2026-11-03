@@ -104,3 +104,21 @@ def test_floor_effect_is_flagged(rf, tmp_path):
     assert a.floor_or_ceiling == "floor"
     assert all(r.success.verdict == "inconclusive" for r in a.rules)
     assert "Floor effect" in render_report(a)
+
+
+def test_concurrent_execution_matches_sequential(rf, tmp_path):
+    runner = FakeRunner(tasks=["a", "b"], cost_per_run=0.0)
+    plan = make_plan(rf, runner, repeats=2)
+    res = execute(plan, runner, new_results(rf, plan, runner, 1), tmp_path / "r.json", 1, concurrency=3)
+    assert res["status"] == "complete"
+    keys = sorted((r["config"], r["task"], r["repeat"]) for r in res["runs"])
+    assert keys == sorted((c.id, t, rep) for rep, t, c in plan.schedule())
+
+
+def test_concurrent_execution_respects_budget(rf, tmp_path):
+    runner = FakeRunner(tasks=["a"], cost_per_run=0.1)
+    plan = make_plan(rf, runner, repeats=1)  # 7 runs x 0.1
+    res = execute(plan, runner, new_results(rf, plan, runner, 0.35), tmp_path / "r.json", 0.35, concurrency=3)
+    assert res["status"] == "budget_exceeded"
+    assert res["spent_usd"] <= 0.35 + 1e-9
+    assert len(res["runs"]) == 3

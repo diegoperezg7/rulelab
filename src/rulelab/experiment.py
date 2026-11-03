@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import math
 import platform
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -129,41 +130,58 @@ def execute(
     out: Path,
     max_cost: float,
     on_run: Callable[[int, int, dict], None] | None = None,
+    concurrency: int = 1,
 ) -> dict:
     """Run every scheduled attempt not already in ``results`` (so it can resume).
 
-    Before each run, the expected cost of that run is checked against what is left of
-    ``max_cost``; if it does not fit, the experiment stops with status ``budget_exceeded``
-    and everything measured so far is kept.
+    Up to ``concurrency`` attempts run at once. Before starting each one, the measured spend plus
+    the expected cost of every attempt in flight (and this one) is checked against ``max_cost``;
+    if it does not fit, no new attempts start, the ones in flight finish, and the experiment ends
+    with status ``budget_exceeded``. Everything measured is saved after each attempt.
     """
     done = {(r["config"], r["task"], r["repeat"]) for r in results["runs"]}
     schedule = plan.schedule()
     total = len(schedule)
+    todo = [(i, rep, task, cfg) for i, (rep, task, cfg) in enumerate(schedule, start=1) if (cfg.id, task, rep) not in done]
     spent = float(results.get("spent_usd", 0.0))
     results["status"] = "running"
+    stop: str | None = None
+    finished = 0
+    pool = ThreadPoolExecutor(max_workers=max(1, concurrency))
+    in_flight: dict = {}
+    queue = list(todo)
     try:
-        for i, (rep, task, cfg) in enumerate(schedule, start=1):
-            if (cfg.id, task, rep) in done:
-                continue
-            if spent + plan.per_run_usd > max_cost + 1e-12:
-                results["status"] = "budget_exceeded"
+        while queue or in_flight:
+            while queue and stop is None and len(in_flight) < max(1, concurrency):
+                if spent + (len(in_flight) + 1) * plan.per_run_usd > max_cost + 1e-12:
+                    stop = "budget_exceeded"
+                    break
+                i, rep, task, cfg = queue.pop(0)
+                in_flight[pool.submit(runner.run, task, cfg.context, rep)] = (i, rep, task, cfg)
+            if not in_flight:
                 break
-            outcome: RunOutcome = runner.run(task, cfg.context, rep)
-            spent += outcome.cost_usd
-            if outcome.error == "budget_exceeded":
+            ready, _ = wait(list(in_flight), return_when=FIRST_COMPLETED)
+            for fut in ready:
+                i, rep, task, cfg = in_flight.pop(fut)
+                outcome: RunOutcome = fut.result()
+                spent += outcome.cost_usd
+                if outcome.error == "budget_exceeded":
+                    stop = "budget_exceeded"
+                    results["spent_usd"] = round(spent, 6)
+                    continue
+                record = {"config": cfg.id, "task": task, "repeat": rep, **asdict(outcome)}
+                results["runs"].append(record)
                 results["spent_usd"] = round(spent, 6)
-                results["status"] = "budget_exceeded"
-                break
-            record = {"config": cfg.id, "task": task, "repeat": rep, **asdict(outcome)}
-            results["runs"].append(record)
-            results["spent_usd"] = round(spent, 6)
-            save(results, out)
-            if on_run:
-                on_run(i, total, record)
-        else:
-            results["status"] = "complete"
+                save(results, out)
+                finished += 1
+                if on_run:
+                    on_run(len(done) + finished, total, record)
+        results["status"] = stop or ("complete" if not queue else "interrupted")
     except KeyboardInterrupt:
         results["status"] = "interrupted"
+        pool.shutdown(wait=False, cancel_futures=True)
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
     results["finished"] = _now()
     save(results, out)
     return results

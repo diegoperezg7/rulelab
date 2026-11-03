@@ -69,7 +69,7 @@ Then run it on your own file and repo (needs Docker, and Ollama or an API key):
 rulelab split AGENTS.md                                   # see how the file is split, free
 rulelab run AGENTS.md --repo . --dry-run                  # plan and cost estimate, free
 rulelab run AGENTS.md --repo . --model ollama/qwen3:4b    # local model, 0 USD
-rulelab run AGENTS.md --repo . --model mistral/codestral-latest --max-cost 5
+rulelab run AGENTS.md --repo . --model mistral/ministral-14b-latest --price 0.2,0.2 -j 3
 ```
 
 ## Example output
@@ -77,34 +77,38 @@ rulelab run AGENTS.md --repo . --model mistral/codestral-latest --max-cost 5
 ```text
 $ rulelab demo
 Recorded run · real results from rulelab run on 2026-11-03 · rulelab 0.1.0 · Darwin arm64 (Apple M4, 16 GB RAM)
-AGENTS.md · model mistral/codestral-latest · 6 tasks × 3 repeats × 8 configs · 144 runs · 5.1760 USD
-full file 0/18 · no file 0/18 · file effect 0 pp [−17, +17]
-full file vs no file: +6,031 input tokens per run [−31,130, +36,229]
+AGENTS.md · model mistral/ministral-14b-latest · 4 tasks × 2 repeats × 8 configs · 64 runs · 0.7376 USD
+full file 2/8 · no file 1/8 · file effect +12 pp [−21, +39]
+full file vs no file: +776 input tokens per run [−15,405, +17,616]
  rule                    ≈tok   effect (pp, 95% CI)   verdict        USD/month
- R1 Repository overview    88          0 [−17, +17]   inconclusive        0.35
- R2 Running tests          47          0 [−17, +17]   inconclusive        0.19
- R3 How to fix a bug       56          0 [−17, +16]   inconclusive        0.22
- R4 Lexer and keywords     68          0 [−16, +17]   inconclusive        0.27
- R5 Code style             34         −6 [−24, +15]   inconclusive        0.13
- R6 Communication          30          0 [−17, +17]   inconclusive        0.12
-Floor effect: only 1% of all runs passed. [...] only the cost columns are informative.
+ R1 Repository overview    88        +12 [−21, +41]   inconclusive        0.23
+ R2 Running tests          47          0 [−26, +25]   inconclusive        0.12
+ R3 How to fix a bug       56        +12 [−20, +40]   inconclusive        0.15
+ R4 Lexer and keywords     68          0 [−26, +27]   inconclusive        0.18
+ R5 Code style             34          0 [−26, +27]   inconclusive        0.09
+ R6 Communication          30          0 [−26, +26]   inconclusive        0.08
+Small sample: most rules are inconclusive. [...]
 ```
 
 **What this recorded run says, plainly.** The demo is a real `rulelab run` of a 6-rule
-[AGENTS.md](examples/demo/AGENTS.md) (it includes a repository overview, as in the paper) on 6
-bug-fix tasks mined by commitarena from [sqlparse](https://github.com/andialbrecht/sqlparse)
-([tasks.json](examples/demo/tasks.json); 3 of them are also in commitarena's own demo set), with
-`mistral/codestral-latest`, 15 agent steps and 3 repeats: 144 agent runs, 5.18 USD.
+[AGENTS.md](examples/demo/AGENTS.md) (it includes a repository overview, as in the paper) on the 4
+most recent tasks of commitarena's own demo set: bug fixes from
+[sqlparse](https://github.com/andialbrecht/sqlparse), scored by sqlparse's tests
+([tasks.json](examples/demo/tasks.json)). Model `mistral/ministral-14b-latest`, 15 agent steps,
+2 repeats, commitarena 0.1.1: 64 agent runs, 27 minutes, 0.74 USD. The model was picked with a
+4-run probe because it passed some tasks but not all (1 of 4), so the baseline is neither 0% nor
+100% and an effect could show up.
 
-Codestral solved 1 of 144 attempts. It also solved 0 of 11 in
-[commitarena's demo](https://github.com/diegoperezg7/commitarena), so these tasks are simply too hard
-for it at 15 steps. With success stuck at the floor, no rule can show an effect on success, and
-rulelab says exactly that: every rule is **inconclusive** and the report flags a **floor effect**
-instead of inventing a verdict. What the run does measure is cost: the file is ≈328 tokens resent on
-each of ~13 model calls per run, about 4,300 input tokens per run that bought no measurable success.
-It is the paper's finding (context costs tokens and does not reliably help) reproduced on one repo,
-and also the most common outcome you should expect from a small experiment.
-To get a verdict on success, run it with a model that solves some but not all of your tasks.
+13 of 64 runs passed. The full file passed 2/8 and no file 1/8 (+12 pp, interval −21 to +39).
+Removing the repository overview or the bug-fixing rule dropped success from 2/8 to 1/8, but with
+4 tasks and 2 repeats that is one run's difference: **every rule is inconclusive**, and the report
+says so instead of forcing a verdict. What the run does pin down is the price: the file is ≈328
+tokens resent on each of ~13 model calls, about 4,300 input tokens per run. To get a verdict,
+run more tasks and repeats on your own repo.
+
+An earlier, larger run (144 runs with codestral on an older commitarena build) solved 1 of 144
+tasks and is not published as a result; it did prove that the run survives engine errors, budget
+stops and interruptions (`--resume`).
 
 The full report, with the annotated file, is published at
 **[diegoperezg7.github.io/rulelab](https://diegoperezg7.github.io/rulelab/)** (EN/ES, light/dark).
@@ -167,7 +171,9 @@ or repeats before deleting a rule because of it.
 | `--max-cost` | 1.0 | Hard budget in USD, checked before every run. Local models count as 0 |
 | `--inject` | `both` | Put the file in the repo root, the system prompt, or both |
 | `--max-steps` | 30 | Model calls per run |
+| `--concurrency`, `-j` | 1 | Agent runs at the same time, each in its own sandbox |
 | `--price` | | `IN,OUT` USD per 1M tokens for models without a known price |
+| `--price-source` | | Where that price comes from; shown in the report |
 | `--sessions-per-month` | 1000 | For the monthly cost projection |
 | `--out`, `-o` | `rulelab-results` | Writes `results.json` (after every run) and `report.html` |
 | `--resume` | | Continue an interrupted or budget-stopped run |
@@ -202,6 +208,7 @@ Not in v0.1:
 
 ## License
 
-[MIT](LICENSE) © 2026 Diego Pérez. The demo tasks come from
-[andialbrecht/sqlparse](https://github.com/andialbrecht/sqlparse) (BSD-3-Clause), mined by
-commitarena; the demo AGENTS.md in [`examples/demo`](examples/demo) was written for this project.
+[MIT](LICENSE) © 2026 Diego Pérez. The demo tasks contain code and tests from
+[andialbrecht/sqlparse](https://github.com/andialbrecht/sqlparse) (BSD-3-Clause, see
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)), taken from commitarena's demo set; the demo
+AGENTS.md in [`examples/demo`](examples/demo) was written for this project.

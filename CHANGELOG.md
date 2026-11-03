@@ -16,7 +16,8 @@ All notable changes to this project are documented here. The format follows
 - Plan and cost estimate before running; `--max-cost` (default 1 USD) checked before every run,
   partial results kept, `--resume` to continue.
 - Static HTML report (EN/ES, light/dark, mobile) with the annotated file.
-- `rulelab demo`: a recorded real run on the commitarena demo tasks.
+- `--concurrency` to run several agent attempts at once (each in its own sandbox).
+- `rulelab demo`: a recorded real run on 4 tasks of the commitarena demo set (ministral-14b, 64 runs).
 
 ### Notes
 - rulelab depends on `commitarena` from its GitHub tag (`v0.1.1`). PyPI rejects direct URL

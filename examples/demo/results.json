@@ -1,0 +1,956 @@
+{
+ "schema": 1,
+ "tool": "rulelab",
+ "version": "0.1.0",
+ "created": "2026-11-03T20:03:33+00:00",
+ "finished": "2026-11-03T20:30:36+00:00",
+ "status": "complete",
+ "model": "mistral/ministral-14b-latest",
+ "meta": {
+  "python": "3.13.12",
+  "platform": "Darwin arm64",
+  "engine": "commitarena 0.1.1",
+  "tasks_source": "examples/demo/tasks.json",
+  "inject": "both",
+  "max_steps": 15,
+  "hardware": "Darwin arm64 (Apple M4, 16 GB RAM)",
+  "price_in_per_mtok": 0.2,
+  "price_out_per_mtok": 0.2,
+  "price_source": "docs.mistral.ai/models/ministral-3-14b-25-12 (2026-11-03)",
+  "cost_method": "usage tokens of every model response x price per 1M tokens",
+  "task_info": {
+   "andialbrecht-sqlparse-f66d12c2": {
+    "repo": "https://github.com/andialbrecht/sqlparse",
+    "commit": "f66d12c245412f28c58f045b646eb53c0e691b8b",
+    "date": "2026-07-25T11:44:58+02:00"
+   },
+   "andialbrecht-sqlparse-ac3b9e0b": {
+    "repo": "https://github.com/andialbrecht/sqlparse",
+    "commit": "ac3b9e0b25627feb42a7053074b6549df81dcfaf",
+    "date": "2026-07-25T11:27:52+02:00"
+   },
+   "andialbrecht-sqlparse-111b35cf": {
+    "repo": "https://github.com/andialbrecht/sqlparse",
+    "commit": "111b35cffcfe44b16fbdd27507f165bafd52a2a1",
+    "date": "2026-07-22T22:58:07+03:00"
+   },
+   "andialbrecht-sqlparse-5ca50a2e": {
+    "repo": "https://github.com/andialbrecht/sqlparse",
+    "commit": "5ca50a2ee9b39e9efeea33e01f132d628144fb69",
+    "date": "2025-11-29T08:26:28+01:00"
+   },
+   "andialbrecht-sqlparse-b126ba5b": {
+    "repo": "https://github.com/andialbrecht/sqlparse",
+    "commit": "b126ba5b2004474e9ad899456c077f976b761319",
+    "date": "2024-07-15T11:54:34+02:00"
+   },
+   "andialbrecht-sqlparse-0c4902f3": {
+    "repo": "https://github.com/andialbrecht/sqlparse",
+    "commit": "0c4902f3f7aafa8c2e63a375ec307c210842f543",
+    "date": "2024-07-15T11:32:49+02:00"
+   },
+   "andialbrecht-sqlparse-e03b74e6": {
+    "repo": "https://github.com/andialbrecht/sqlparse",
+    "commit": "e03b74e608b71dd06824c2cb42421c0d790248e3",
+    "date": "2024-04-13T13:41:02+02:00"
+   },
+   "andialbrecht-sqlparse-46971e5a": {
+    "repo": "https://github.com/andialbrecht/sqlparse",
+    "commit": "46971e5a804b29e7dbd437155a8ceffab8ef1cd5",
+    "date": "2024-03-16T17:03:23+01:00"
+   },
+   "andialbrecht-sqlparse-20caed83": {
+    "repo": "https://github.com/andialbrecht/sqlparse",
+    "commit": "20caed831605ec341ed670302f6b0f17685f156d",
+    "date": "2026-11-01T13:23:08+01:00"
+   },
+   "andialbrecht-sqlparse-3512a9d8": {
+    "repo": "https://github.com/andialbrecht/sqlparse",
+    "commit": "3512a9d86912720ae67181ad2e9fd9cc28a73408",
+    "date": "2026-11-01T12:54:06+01:00"
+   },
+   "andialbrecht-sqlparse-bb3c50a5": {
+    "repo": "https://github.com/andialbrecht/sqlparse",
+    "commit": "bb3c50a52dc2f267c786f0d99c27b25519f9331f",
+    "date": "2026-10-20T10:56:23-03:00"
+   }
+  }
+ },
+ "file": {
+  "path": "AGENTS.md",
+  "granularity": "section",
+  "text": "# AGENTS.md\n\n## Repository overview\n\nsqlparse is a non-validating SQL parser for Python. The package lives in `sqlparse/`:\n`lexer.py` and `keywords.py` turn text into tokens, `engine/` groups tokens into statements,\n`sql.py` defines the token tree, `filters/` and `formatter.py` implement formatting, and\n`cli.py` is the `sqlformat` command. Tests live in `tests/`.\n\n## Running tests\n\nRun the tests that cover your change with `python -m pytest -q tests/<file>.py`, then the whole\nsuite with `python -m pytest -q`. Do not finish while a test is failing.\n\n## How to fix a bug\n\nRead the failing test first and reproduce the failure before editing anything. Fix the root\ncause with the smallest change that makes the test pass. Never edit or delete existing tests to\nmake them pass.\n\n## Lexer and keywords\n\nToken rules are regular expressions in `sqlparse/keywords.py` and they are tried in order: the\nfirst match wins. When adding or changing a pattern, put more specific patterns before more\ngeneral ones and check that neighbouring patterns still match.\n\n## Code style\n\nFollow PEP 8, keep lines under 88 characters, and do not add new dependencies. Keep public\nfunction signatures unchanged.\n\n## Communication\n\nBefore finishing, write a short summary of what you changed and why, listing every file you\ntouched.\n",
+  "tokens": 328,
+  "rules": [
+   {
+    "id": "R1",
+    "title": "Repository overview",
+    "text": "## Repository overview\n\nsqlparse is a non-validating SQL parser for Python. The package lives in `sqlparse/`:\n`lexer.py` and `keywords.py` turn text into tokens, `engine/` groups tokens into statements,\n`sql.py` defines the token tree, `filters/` and `formatter.py` implement formatting, and\n`cli.py` is the `sqlformat` command. Tests live in `tests/`.",
+    "start_line": 3,
+    "end_line": 8,
+    "tokens": 88
+   },
+   {
+    "id": "R2",
+    "title": "Running tests",
+    "text": "## Running tests\n\nRun the tests that cover your change with `python -m pytest -q tests/<file>.py`, then the whole\nsuite with `python -m pytest -q`. Do not finish while a test is failing.",
+    "start_line": 10,
+    "end_line": 13,
+    "tokens": 47
+   },
+   {
+    "id": "R3",
+    "title": "How to fix a bug",
+    "text": "## How to fix a bug\n\nRead the failing test first and reproduce the failure before editing anything. Fix the root\ncause with the smallest change that makes the test pass. Never edit or delete existing tests to\nmake them pass.",
+    "start_line": 15,
+    "end_line": 19,
+    "tokens": 56
+   },
+   {
+    "id": "R4",
+    "title": "Lexer and keywords",
+    "text": "## Lexer and keywords\n\nToken rules are regular expressions in `sqlparse/keywords.py` and they are tried in order: the\nfirst match wins. When adding or changing a pattern, put more specific patterns before more\ngeneral ones and check that neighbouring patterns still match.",
+    "start_line": 21,
+    "end_line": 25,
+    "tokens": 68
+   },
+   {
+    "id": "R5",
+    "title": "Code style",
+    "text": "## Code style\n\nFollow PEP 8, keep lines under 88 characters, and do not add new dependencies. Keep public\nfunction signatures unchanged.",
+    "start_line": 27,
+    "end_line": 30,
+    "tokens": 34
+   },
+   {
+    "id": "R6",
+    "title": "Communication",
+    "text": "## Communication\n\nBefore finishing, write a short summary of what you changed and why, listing every file you\ntouched.",
+    "start_line": 32,
+    "end_line": 35,
+    "tokens": 30
+   }
+  ]
+ },
+ "configs": [
+  {
+   "id": "none",
+   "removed": null
+  },
+  {
+   "id": "full",
+   "removed": null
+  },
+  {
+   "id": "minus:R1",
+   "removed": "R1"
+  },
+  {
+   "id": "minus:R2",
+   "removed": "R2"
+  },
+  {
+   "id": "minus:R3",
+   "removed": "R3"
+  },
+  {
+   "id": "minus:R4",
+   "removed": "R4"
+  },
+  {
+   "id": "minus:R5",
+   "removed": "R5"
+  },
+  {
+   "id": "minus:R6",
+   "removed": "R6"
+  }
+ ],
+ "tasks": [
+  "andialbrecht-sqlparse-20caed83",
+  "andialbrecht-sqlparse-3512a9d8",
+  "andialbrecht-sqlparse-bb3c50a5",
+  "andialbrecht-sqlparse-f66d12c2"
+ ],
+ "repeats": 2,
+ "max_cost": 2.0,
+ "estimated_usd": 1.56576,
+ "spent_usd": 0.737553,
+ "runs": [
+  {
+   "config": "none",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 50136,
+   "output_tokens": 755,
+   "cost_usd": 0.010178,
+   "turns": 15,
+   "duration_s": 39.0,
+   "error": null
+  },
+  {
+   "config": "full",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 68981,
+   "output_tokens": 1293,
+   "cost_usd": 0.014055,
+   "turns": 15,
+   "duration_s": 48.5,
+   "error": null
+  },
+  {
+   "config": "minus:R1",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 71864,
+   "output_tokens": 887,
+   "cost_usd": 0.01455,
+   "turns": 15,
+   "duration_s": 49.8,
+   "error": null
+  },
+  {
+   "config": "minus:R2",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 79396,
+   "output_tokens": 1124,
+   "cost_usd": 0.016104,
+   "turns": 15,
+   "duration_s": 64.6,
+   "error": null
+  },
+  {
+   "config": "minus:R4",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 59458,
+   "output_tokens": 732,
+   "cost_usd": 0.012038,
+   "turns": 15,
+   "duration_s": 63.6,
+   "error": null
+  },
+  {
+   "config": "minus:R3",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 66323,
+   "output_tokens": 1217,
+   "cost_usd": 0.013508,
+   "turns": 15,
+   "duration_s": 105.4,
+   "error": null
+  },
+  {
+   "config": "minus:R6",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 66696,
+   "output_tokens": 966,
+   "cost_usd": 0.013532,
+   "turns": 15,
+   "duration_s": 69.2,
+   "error": null
+  },
+  {
+   "config": "none",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 95878,
+   "output_tokens": 1430,
+   "cost_usd": 0.019462,
+   "turns": 15,
+   "duration_s": 71.3,
+   "error": null
+  },
+  {
+   "config": "full",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 71461,
+   "output_tokens": 1717,
+   "cost_usd": 0.014636,
+   "turns": 15,
+   "duration_s": 98.8,
+   "error": null
+  },
+  {
+   "config": "minus:R5",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 60305,
+   "output_tokens": 824,
+   "cost_usd": 0.012226,
+   "turns": 15,
+   "duration_s": 184.3,
+   "error": null
+  },
+  {
+   "config": "minus:R1",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 102868,
+   "output_tokens": 1384,
+   "cost_usd": 0.02085,
+   "turns": 15,
+   "duration_s": 75.6,
+   "error": null
+  },
+  {
+   "config": "minus:R3",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 88556,
+   "output_tokens": 1325,
+   "cost_usd": 0.017976,
+   "turns": 15,
+   "duration_s": 71.0,
+   "error": null
+  },
+  {
+   "config": "minus:R2",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 80051,
+   "output_tokens": 1454,
+   "cost_usd": 0.016301,
+   "turns": 14,
+   "duration_s": 83.9,
+   "error": null
+  },
+  {
+   "config": "minus:R4",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 70265,
+   "output_tokens": 1357,
+   "cost_usd": 0.014324,
+   "turns": 15,
+   "duration_s": 66.4,
+   "error": null
+  },
+  {
+   "config": "none",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 27326,
+   "output_tokens": 499,
+   "cost_usd": 0.005565,
+   "turns": 9,
+   "duration_s": 39.3,
+   "error": null
+  },
+  {
+   "config": "full",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 42581,
+   "output_tokens": 624,
+   "cost_usd": 0.008641,
+   "turns": 11,
+   "duration_s": 58.5,
+   "error": null
+  },
+  {
+   "config": "minus:R5",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 92599,
+   "output_tokens": 1539,
+   "cost_usd": 0.018828,
+   "turns": 15,
+   "duration_s": 125.3,
+   "error": null
+  },
+  {
+   "config": "minus:R6",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 72192,
+   "output_tokens": 1447,
+   "cost_usd": 0.014728,
+   "turns": 15,
+   "duration_s": 121.1,
+   "error": null
+  },
+  {
+   "config": "minus:R1",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 16741,
+   "output_tokens": 377,
+   "cost_usd": 0.003424,
+   "turns": 5,
+   "duration_s": 18.9,
+   "error": null
+  },
+  {
+   "config": "minus:R2",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 45676,
+   "output_tokens": 569,
+   "cost_usd": 0.009249,
+   "turns": 10,
+   "duration_s": 43.3,
+   "error": null
+  },
+  {
+   "config": "minus:R4",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 29715,
+   "output_tokens": 681,
+   "cost_usd": 0.006079,
+   "turns": 9,
+   "duration_s": 45.1,
+   "error": null
+  },
+  {
+   "config": "minus:R3",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 48442,
+   "output_tokens": 683,
+   "cost_usd": 0.009825,
+   "turns": 13,
+   "duration_s": 46.0,
+   "error": null
+  },
+  {
+   "config": "minus:R5",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 18962,
+   "output_tokens": 390,
+   "cost_usd": 0.00387,
+   "turns": 6,
+   "duration_s": 57.7,
+   "error": null
+  },
+  {
+   "config": "minus:R6",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 40312,
+   "output_tokens": 585,
+   "cost_usd": 0.008179,
+   "turns": 11,
+   "duration_s": 59.6,
+   "error": null
+  },
+  {
+   "config": "none",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 1,
+   "success": true,
+   "input_tokens": 41394,
+   "output_tokens": 1203,
+   "cost_usd": 0.008519,
+   "turns": 15,
+   "duration_s": 95.6,
+   "error": null
+  },
+  {
+   "config": "minus:R2",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 1,
+   "success": true,
+   "input_tokens": 23874,
+   "output_tokens": 992,
+   "cost_usd": 0.004973,
+   "turns": 10,
+   "duration_s": 86.4,
+   "error": null
+  },
+  {
+   "config": "minus:R1",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 50995,
+   "output_tokens": 1102,
+   "cost_usd": 0.010419,
+   "turns": 15,
+   "duration_s": 124.8,
+   "error": null
+  },
+  {
+   "config": "full",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 1,
+   "success": true,
+   "input_tokens": 58049,
+   "output_tokens": 1212,
+   "cost_usd": 0.011852,
+   "turns": 15,
+   "duration_s": 140.7,
+   "error": null
+  },
+  {
+   "config": "minus:R3",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 1,
+   "success": false,
+   "input_tokens": 54218,
+   "output_tokens": 1298,
+   "cost_usd": 0.011103,
+   "turns": 15,
+   "duration_s": 47.3,
+   "error": null
+  },
+  {
+   "config": "minus:R5",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 1,
+   "success": true,
+   "input_tokens": 38015,
+   "output_tokens": 1116,
+   "cost_usd": 0.007826,
+   "turns": 13,
+   "duration_s": 37.6,
+   "error": null
+  },
+  {
+   "config": "none",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 53041,
+   "output_tokens": 742,
+   "cost_usd": 0.010757,
+   "turns": 15,
+   "duration_s": 65.9,
+   "error": null
+  },
+  {
+   "config": "minus:R6",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 1,
+   "success": true,
+   "input_tokens": 37480,
+   "output_tokens": 1243,
+   "cost_usd": 0.007745,
+   "turns": 12,
+   "duration_s": 73.9,
+   "error": null
+  },
+  {
+   "config": "minus:R4",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 1,
+   "success": true,
+   "input_tokens": 36129,
+   "output_tokens": 1171,
+   "cost_usd": 0.00746,
+   "turns": 14,
+   "duration_s": 126.9,
+   "error": null
+  },
+  {
+   "config": "full",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 81406,
+   "output_tokens": 1049,
+   "cost_usd": 0.016491,
+   "turns": 15,
+   "duration_s": 49.6,
+   "error": null
+  },
+  {
+   "config": "minus:R2",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 66254,
+   "output_tokens": 1104,
+   "cost_usd": 0.013472,
+   "turns": 15,
+   "duration_s": 83.5,
+   "error": null
+  },
+  {
+   "config": "minus:R1",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 74282,
+   "output_tokens": 1067,
+   "cost_usd": 0.01507,
+   "turns": 15,
+   "duration_s": 112.3,
+   "error": null
+  },
+  {
+   "config": "minus:R4",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 65027,
+   "output_tokens": 1102,
+   "cost_usd": 0.013226,
+   "turns": 15,
+   "duration_s": 36.4,
+   "error": null
+  },
+  {
+   "config": "minus:R5",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 62840,
+   "output_tokens": 1100,
+   "cost_usd": 0.012788,
+   "turns": 15,
+   "duration_s": 65.1,
+   "error": null
+  },
+  {
+   "config": "minus:R3",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 63693,
+   "output_tokens": 1192,
+   "cost_usd": 0.012977,
+   "turns": 15,
+   "duration_s": 133.9,
+   "error": null
+  },
+  {
+   "config": "minus:R6",
+   "task": "andialbrecht-sqlparse-20caed83",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 72195,
+   "output_tokens": 1217,
+   "cost_usd": 0.014682,
+   "turns": 15,
+   "duration_s": 88.0,
+   "error": null
+  },
+  {
+   "config": "full",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 96808,
+   "output_tokens": 1416,
+   "cost_usd": 0.019645,
+   "turns": 15,
+   "duration_s": 109.9,
+   "error": null
+  },
+  {
+   "config": "minus:R1",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 94367,
+   "output_tokens": 1545,
+   "cost_usd": 0.019182,
+   "turns": 15,
+   "duration_s": 79.8,
+   "error": null
+  },
+  {
+   "config": "none",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 97706,
+   "output_tokens": 2360,
+   "cost_usd": 0.020013,
+   "turns": 15,
+   "duration_s": 164.7,
+   "error": null
+  },
+  {
+   "config": "minus:R3",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 67972,
+   "output_tokens": 1413,
+   "cost_usd": 0.013877,
+   "turns": 14,
+   "duration_s": 50.6,
+   "error": null
+  },
+  {
+   "config": "minus:R2",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 89926,
+   "output_tokens": 1925,
+   "cost_usd": 0.01837,
+   "turns": 15,
+   "duration_s": 58.1,
+   "error": null
+  },
+  {
+   "config": "minus:R4",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 89869,
+   "output_tokens": 1185,
+   "cost_usd": 0.018211,
+   "turns": 15,
+   "duration_s": 56.8,
+   "error": null
+  },
+  {
+   "config": "minus:R6",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 73175,
+   "output_tokens": 1118,
+   "cost_usd": 0.014859,
+   "turns": 12,
+   "duration_s": 102.8,
+   "error": null
+  },
+  {
+   "config": "minus:R5",
+   "task": "andialbrecht-sqlparse-3512a9d8",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 89650,
+   "output_tokens": 1613,
+   "cost_usd": 0.018253,
+   "turns": 15,
+   "duration_s": 111.6,
+   "error": null
+  },
+  {
+   "config": "none",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 48518,
+   "output_tokens": 888,
+   "cost_usd": 0.009881,
+   "turns": 12,
+   "duration_s": 70.8,
+   "error": null
+  },
+  {
+   "config": "full",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 35522,
+   "output_tokens": 619,
+   "cost_usd": 0.007228,
+   "turns": 9,
+   "duration_s": 35.0,
+   "error": null
+  },
+  {
+   "config": "minus:R1",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 32711,
+   "output_tokens": 555,
+   "cost_usd": 0.006653,
+   "turns": 9,
+   "duration_s": 30.4,
+   "error": null
+  },
+  {
+   "config": "minus:R3",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 17144,
+   "output_tokens": 346,
+   "cost_usd": 0.003498,
+   "turns": 5,
+   "duration_s": 38.3,
+   "error": null
+  },
+  {
+   "config": "minus:R2",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 54132,
+   "output_tokens": 629,
+   "cost_usd": 0.010952,
+   "turns": 12,
+   "duration_s": 63.1,
+   "error": null
+  },
+  {
+   "config": "minus:R4",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 62528,
+   "output_tokens": 1405,
+   "cost_usd": 0.012787,
+   "turns": 14,
+   "duration_s": 96.4,
+   "error": null
+  },
+  {
+   "config": "minus:R6",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 29614,
+   "output_tokens": 520,
+   "cost_usd": 0.006027,
+   "turns": 9,
+   "duration_s": 57.9,
+   "error": null
+  },
+  {
+   "config": "minus:R5",
+   "task": "andialbrecht-sqlparse-bb3c50a5",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 24305,
+   "output_tokens": 479,
+   "cost_usd": 0.004957,
+   "turns": 7,
+   "duration_s": 82.6,
+   "error": null
+  },
+  {
+   "config": "none",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 2,
+   "success": false,
+   "input_tokens": 58427,
+   "output_tokens": 1314,
+   "cost_usd": 0.011948,
+   "turns": 15,
+   "duration_s": 51.5,
+   "error": null
+  },
+  {
+   "config": "full",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 2,
+   "success": true,
+   "input_tokens": 23826,
+   "output_tokens": 810,
+   "cost_usd": 0.004927,
+   "turns": 10,
+   "duration_s": 58.0,
+   "error": null
+  },
+  {
+   "config": "minus:R1",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 2,
+   "success": true,
+   "input_tokens": 50433,
+   "output_tokens": 1905,
+   "cost_usd": 0.010468,
+   "turns": 15,
+   "duration_s": 83.2,
+   "error": null
+  },
+  {
+   "config": "minus:R2",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 2,
+   "success": true,
+   "input_tokens": 27437,
+   "output_tokens": 906,
+   "cost_usd": 0.005669,
+   "turns": 11,
+   "duration_s": 62.5,
+   "error": null
+  },
+  {
+   "config": "minus:R3",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 2,
+   "success": true,
+   "input_tokens": 19964,
+   "output_tokens": 780,
+   "cost_usd": 0.004149,
+   "turns": 9,
+   "duration_s": 55.6,
+   "error": null
+  },
+  {
+   "config": "minus:R4",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 2,
+   "success": true,
+   "input_tokens": 31605,
+   "output_tokens": 1020,
+   "cost_usd": 0.006525,
+   "turns": 12,
+   "duration_s": 56.9,
+   "error": null
+  },
+  {
+   "config": "minus:R5",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 2,
+   "success": true,
+   "input_tokens": 25285,
+   "output_tokens": 1086,
+   "cost_usd": 0.005274,
+   "turns": 10,
+   "duration_s": 61.3,
+   "error": null
+  },
+  {
+   "config": "minus:R6",
+   "task": "andialbrecht-sqlparse-f66d12c2",
+   "repeat": 2,
+   "success": true,
+   "input_tokens": 32593,
+   "output_tokens": 967,
+   "cost_usd": 0.006712,
+   "turns": 12,
+   "duration_s": 62.9,
+   "error": null
+  }
+ ],
+ "recorded": {
+  "date": "2026-11-03",
+  "version": "0.1.0",
+  "hardware": "Darwin arm64 (Apple M4, 16 GB RAM)",
+  "model": "mistral/ministral-14b-latest",
+  "command": "rulelab run examples/demo/AGENTS.md --tasks-file examples/demo/tasks.json --only andialbrecht-sqlparse-20caed83,andialbrecht-sqlparse-3512a9d8,andialbrecht-sqlparse-bb3c50a5,andialbrecht-sqlparse-f66d12c2 -m mistral/ministral-14b-latest --price 0.2,0.2 --price-source \"docs.mistral.ai/models/ministral-3-14b-25-12 (2026-11-03)\" --max-steps 15 --repeats 2 --concurrency 3 --max-cost 2"
+ }
+}

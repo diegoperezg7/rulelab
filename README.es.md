@@ -69,7 +69,7 @@ Después, sobre tu propio fichero y repo (necesita Docker, y Ollama o una API ke
 rulelab split AGENTS.md                                   # cómo se parte el fichero, gratis
 rulelab run AGENTS.md --repo . --dry-run                  # plan y coste estimado, gratis
 rulelab run AGENTS.md --repo . --model ollama/qwen3:4b    # modelo local, 0 USD
-rulelab run AGENTS.md --repo . --model mistral/codestral-latest --max-cost 5
+rulelab run AGENTS.md --repo . --model mistral/ministral-14b-latest --price 0.2,0.2 -j 3
 ```
 
 ## Salida de ejemplo
@@ -77,36 +77,39 @@ rulelab run AGENTS.md --repo . --model mistral/codestral-latest --max-cost 5
 ```text
 $ rulelab demo
 Recorded run · real results from rulelab run on 2026-11-03 · rulelab 0.1.0 · Darwin arm64 (Apple M4, 16 GB RAM)
-AGENTS.md · model mistral/codestral-latest · 6 tasks × 3 repeats × 8 configs · 144 runs · 5.1760 USD
-full file 0/18 · no file 0/18 · file effect 0 pp [−17, +17]
-full file vs no file: +6,031 input tokens per run [−31,130, +36,229]
+AGENTS.md · model mistral/ministral-14b-latest · 4 tasks × 2 repeats × 8 configs · 64 runs · 0.7376 USD
+full file 2/8 · no file 1/8 · file effect +12 pp [−21, +39]
+full file vs no file: +776 input tokens per run [−15,405, +17,616]
  rule                    ≈tok   effect (pp, 95% CI)   verdict        USD/month
- R1 Repository overview    88          0 [−17, +17]   inconclusive        0.35
- R2 Running tests          47          0 [−17, +17]   inconclusive        0.19
- R3 How to fix a bug       56          0 [−17, +16]   inconclusive        0.22
- R4 Lexer and keywords     68          0 [−16, +17]   inconclusive        0.27
- R5 Code style             34         −6 [−24, +15]   inconclusive        0.13
- R6 Communication          30          0 [−17, +17]   inconclusive        0.12
-Floor effect: only 1% of all runs passed. [...] only the cost columns are informative.
+ R1 Repository overview    88        +12 [−21, +41]   inconclusive        0.23
+ R2 Running tests          47          0 [−26, +25]   inconclusive        0.12
+ R3 How to fix a bug       56        +12 [−20, +40]   inconclusive        0.15
+ R4 Lexer and keywords     68          0 [−26, +27]   inconclusive        0.18
+ R5 Code style             34          0 [−26, +27]   inconclusive        0.09
+ R6 Communication          30          0 [−26, +26]   inconclusive        0.08
+Small sample: most rules are inconclusive. [...]
 ```
 
 **Lo que dice esta ejecución grabada, sin adornos.** La demo es un `rulelab run` real de un
 [AGENTS.md](examples/demo/AGENTS.md) de 6 reglas (incluye una descripción general del repositorio,
-como en el paper) sobre 6 tareas de arreglo de bugs minadas por commitarena de
-[sqlparse](https://github.com/andialbrecht/sqlparse) ([tasks.json](examples/demo/tasks.json); 3 de
-ellas están también en la demo de commitarena), con `mistral/codestral-latest`, 15 pasos de agente y
-3 repeticiones: 144 ejecuciones, 5,18 USD.
+como en el paper) sobre las 4 tareas más recientes de la demo de commitarena: arreglos de bugs de
+[sqlparse](https://github.com/andialbrecht/sqlparse), puntuados con los tests de sqlparse
+([tasks.json](examples/demo/tasks.json)). Modelo `mistral/ministral-14b-latest`, 15 pasos de agente,
+2 repeticiones, commitarena 0.1.1: 64 ejecuciones, 27 minutos, 0,74 USD. El modelo se eligió con
+un sondeo de 4 ejecuciones porque resolvía algunas tareas pero no todas (1 de 4), así que la línea
+base no es ni 0 % ni 100 % y un efecto podría aparecer.
 
-Codestral resolvió 1 de 144 intentos. En la [demo de commitarena](https://github.com/diegoperezg7/commitarena)
-también resolvió 0 de 11, así que estas tareas son demasiado difíciles para él con 15 pasos. Con el
-acierto pegado al suelo, ninguna regla puede mostrar efecto en el acierto, y rulelab lo dice tal
-cual: todas las reglas salen **no concluyentes** y el informe marca un **efecto suelo** en vez de
-inventarse un veredicto. Lo que sí mide la ejecución es el coste: el fichero son ≈328 tokens
-reenviados en cada una de las ~13 llamadas al modelo por ejecución, unos 4.300 tokens de entrada por
-ejecución que no compraron ningún acierto medible. Es lo que encontró el paper (el contexto cuesta
-tokens y no ayuda de forma fiable) reproducido en un repo, y también el resultado más habitual que
-cabe esperar de un experimento pequeño. Para tener un veredicto sobre el acierto, ejecútalo con un
-modelo que resuelva algunas de tus tareas, pero no todas.
+Pasaron 13 de 64 ejecuciones. El fichero completo pasó 2/8 y sin fichero 1/8 (+12 pp, intervalo de
+−21 a +39). Quitar la descripción del repositorio o la regla de cómo arreglar un bug bajó el
+acierto de 2/8 a 1/8, pero con 4 tareas y 2 repeticiones eso es una sola ejecución de diferencia:
+**todas las reglas salen no concluyentes**, y el informe lo dice en vez de forzar un veredicto. Lo
+que sí deja claro es el precio: el fichero son ≈328 tokens reenviados en cada una de las ~13
+llamadas al modelo, unos 4.300 tokens de entrada por ejecución. Para tener un veredicto, usa más
+tareas y repeticiones sobre tu propio repo.
+
+Una ejecución anterior más grande (144 ejecuciones con codestral sobre una versión previa de
+commitarena) resolvió 1 de 144 tareas y no se publica como resultado; sí demostró que la ejecución
+sobrevive a errores del motor, cortes por presupuesto e interrupciones (`--resume`).
 
 El informe completo, con el fichero anotado, está publicado en
 **[diegoperezg7.github.io/rulelab](https://diegoperezg7.github.io/rulelab/)** (EN/ES, claro/oscuro).
@@ -170,7 +173,9 @@ Añade tareas (`--max-tasks`) o repeticiones antes de borrar una regla por eso.
 | `--max-cost` | 1.0 | Tope de gasto en USD, comprobado antes de cada ejecución. Los modelos locales cuentan 0 |
 | `--inject` | `both` | El fichero en la raíz del repo, en el prompt de sistema o en ambos |
 | `--max-steps` | 30 | Llamadas al modelo por ejecución |
+| `--concurrency`, `-j` | 1 | Ejecuciones a la vez, cada una en su sandbox |
 | `--price` | | `IN,OUT` en USD por 1M de tokens para modelos sin precio conocido |
+| `--price-source` | | De dónde sale ese precio; aparece en el informe |
 | `--sessions-per-month` | 1000 | Para la proyección de coste mensual |
 | `--out`, `-o` | `rulelab-results` | Escribe `results.json` (tras cada ejecución) y `report.html` |
 | `--resume` | | Continuar una ejecución interrumpida o parada por presupuesto |
@@ -205,7 +210,7 @@ Fuera de la v0.1:
 
 ## Licencia
 
-[MIT](LICENSE) © 2026 Diego Pérez. Las tareas de la demo salen de
-[andialbrecht/sqlparse](https://github.com/andialbrecht/sqlparse) (BSD-3-Clause), minadas por
-commitarena; el AGENTS.md de la demo en [`examples/demo`](examples/demo) se escribió para este
-proyecto.
+[MIT](LICENSE) © 2026 Diego Pérez. Las tareas de la demo contienen código y tests de
+[andialbrecht/sqlparse](https://github.com/andialbrecht/sqlparse) (BSD-3-Clause, ver
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)), tomadas de la demo de commitarena; el AGENTS.md
+de la demo en [`examples/demo`](examples/demo) se escribió para este proyecto.

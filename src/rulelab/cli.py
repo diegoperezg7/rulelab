@@ -218,7 +218,10 @@ def run(
     try:
         check_budget(plan, max_cost, done, spent)
     except BudgetError as e:
-        _fail(str(e), "Nothing was run. Lower --repeats, pick fewer --tasks or a cheaper --model, or raise --max-cost.", code=2)
+        if dry_run:
+            console.print(f"[yellow]Over budget:[/] {e}")
+            return
+        _fail(str(e), "Nothing was run. Lower --repeats, use --only with fewer tasks, pick a cheaper --model, or raise --max-cost.", code=2)
     if dry_run:
         return
     if not yes and plan.per_run_usd > 0 and sys.stdin.isatty():
@@ -231,7 +234,8 @@ def run(
 
     def progress(i: int, total: int, rec: dict) -> None:
         mark = {True: "[green]pass[/]", False: "[red]fail[/]", None: "[yellow]error[/]"}[rec["success"]]
-        console.print(f"[dim]{i:>4}/{total}[/] {rec['config']:<12} {rec['task']:<24} #{rec['repeat']} {mark}")
+        extra = f"{rec['duration_s']:.0f}s · {rec['input_tokens']:,} tok in · {rec['cost_usd']:.4f} USD"
+        console.print(f"[dim]{i:>4}/{total}[/] {rec['config']:<12} {rec['task']:<32} #{rec['repeat']} {mark} [dim]{extra}[/]")
 
     try:
         results = execute(plan, runner, results, results_path, max_cost, on_run=progress)

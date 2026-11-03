@@ -23,9 +23,10 @@ class BudgetError(Exception):
 
     def __init__(self, needed: float, max_cost: float, runs: int, per_run: float) -> None:
         self.needed, self.max_cost, self.runs, self.per_run = needed, max_cost, runs, per_run
+        self.suggested = math.ceil(round(needed * 100, 6)) / 100
         super().__init__(
-            f"This experiment needs about {needed:.2f} USD ({runs} agent runs x {per_run:.4f} USD) "
-            f"but --max-cost is {max_cost:.2f} USD. Re-run with --max-cost {math.ceil(round(needed * 100, 6)) / 100:.2f} to allow it."
+            f"This experiment needs about {self.suggested:.2f} USD ({runs} agent runs x {per_run:.4f} USD) "
+            f"but --max-cost is {max_cost:.2f} USD. Re-run with --max-cost {self.suggested:.2f} to allow it."
         )
 
 

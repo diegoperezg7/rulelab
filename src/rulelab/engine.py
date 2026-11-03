@@ -14,10 +14,15 @@ from pathlib import Path
 from .errors import RulelabError
 from .runner import RunOutcome
 
-# Assumed tokens for one agent run when estimating cost before anything has run
-# (same assumption as the project plan: ~300k input, ~10k output per agent task).
-EST_TOKENS_IN = 300_000
-EST_TOKENS_OUT = 10_000
+# Token model used to estimate cost before anything has run. The whole conversation is resent on
+# every step, so input tokens grow roughly quadratically with the number of steps:
+#   input ~= 1,000 * steps + 467 * steps^2     output ~= 150 * steps
+# Fitted to two measured codestral runs on sqlparse (15 steps: ~120k input; 30 steps: 450,755).
+# It assumes the agent uses every step, so it tends to over-estimate.
+
+
+def estimate_tokens(steps: int) -> tuple[int, int]:
+    return 1_000 * steps + 467 * steps * steps, 150 * steps
 
 
 def _ca():
@@ -130,8 +135,8 @@ class CommitarenaRunner:
         pin, pout = self.spec.unit_price() or (0.0, 0.0)
         self.price = (pin, pout)
         self.estimate_note = (
-            f"assumes ~{EST_TOKENS_IN // 1000}k input + {EST_TOKENS_OUT // 1000}k output tokens per run "
-            f"at {pin}/{pout} USD per 1M"
+            f"assumes all {max_steps} steps are used: ~{estimate_tokens(max_steps)[0] // 1000}k input tokens "
+            f"per run at {pin}/{pout} USD per 1M"
         )
 
     def set_budget(self, max_cost: float, spent: float = 0.0) -> None:
@@ -160,7 +165,8 @@ class CommitarenaRunner:
         if self.spec.is_local:
             return 0.0
         pin, pout = self.price
-        return (EST_TOKENS_IN * pin + EST_TOKENS_OUT * pout) / 1_000_000
+        tin, tout = estimate_tokens(self.max_steps)
+        return (tin * pin + tout * pout) / 1_000_000
 
     def run(self, task_id: str, context: str | None, repeat: int) -> RunOutcome:
         ca = _ca()

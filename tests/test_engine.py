@@ -63,7 +63,7 @@ def test_estimates():
     local = engine.CommitarenaRunner([], "ollama/qwen3:4b")
     assert local.estimate_run_cost() == 0
     paid = engine.CommitarenaRunner([], "mistral/codestral-latest")
-    assert paid.estimate_run_cost() == pytest.approx((300_000 * 0.30 + 10_000 * 0.90) / 1e6)
+    assert paid.estimate_run_cost() == pytest.approx((450_300 * 0.30 + 4_500 * 0.90) / 1e6)
     assert paid.meta()["price_in_per_mtok"] == 0.30
 
 

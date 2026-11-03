@@ -18,6 +18,8 @@ VERDICT_LABELS = {
     "inconclusive": ("inconclusive", "no concluyente"),
 }
 
+PLURAL_ES = {"helps": "ayudan", "no_effect": "sin efecto", "hurts": "empeoran", "inconclusive": "no concluyentes"}
+
 
 def _num(x: float) -> bool:
     return x is not None and not (isinstance(x, float) and math.isnan(x))
@@ -142,6 +144,7 @@ def render_report(a: Analysis, *, recorded_note: dict | None = None) -> str:
         configs=configs,
         blocks=_annotated(a),
         verdicts=VERDICT_LABELS,
+        plural_es=PLURAL_ES,
         whole_bar=ci_bar(a.whole_file.low, a.whole_file.high, a.whole_file.estimate, a.margin)
         if a.whole_file
         else {"ok": False},

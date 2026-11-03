@@ -194,6 +194,10 @@ class CommitarenaRunner:
             raise RulelabError(str(e)) from e
         except ca.CommitArenaError as e:
             return RunOutcome(None, error=str(e)[:500])
+        except (ValueError, OSError, RuntimeError) as e:
+            # An engine failure on one attempt (e.g. a malformed command from the model) must not
+            # lose the whole experiment: record it as an infrastructure error, excluded from stats.
+            return RunOutcome(None, error=f"engine error: {type(e).__name__}: {e}"[:500])
         infra = res.stop_reason in ("model_error", "budget_exceeded") or (res.error and not res.steps)
         return RunOutcome(
             success=None if infra else bool(res.passed),

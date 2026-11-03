@@ -83,3 +83,9 @@ def test_ollama_unreachable(monkeypatch):
 def test_bad_provider():
     with pytest.raises(RulelabError, match="Unknown provider"):
         engine.CommitarenaRunner([], "nope/x")
+
+
+def test_unexpected_engine_error_is_recorded(monkeypatch):
+    runner, _ = make(monkeypatch, exc=ValueError("embedded null byte"))
+    out = runner.run("t1", "x", 1)
+    assert out.success is None and "embedded null byte" in out.error

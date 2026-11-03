@@ -240,7 +240,7 @@ footer { border-top: 1px solid var(--border); padding: 20px 0 32px; font-size: 1
     <div class="card kpi">
       <div class="label">{{ t("Verdicts", "Veredictos") }}</div>
       <div class="value">{{ a.rules|length }} <span style="font-size:14px;font-weight:500" class="muted">{{ t("rules", "reglas") }}</span></div>
-      <div class="sub">{% for k, n in a.verdict_counts.items() if n %}{{ n }} {{ t(verdicts[k][0], verdicts[k][1]) }}{% if not loop.last %} · {% endif %}{% endfor %}</div>
+      <div class="sub">{% for k, n in a.verdict_counts.items() if n %}{{ n }} {{ t(verdicts[k][0], plural_es[k] if n > 1 else verdicts[k][1]) }}{% if not loop.last %} · {% endif %}{% endfor %}</div>
     </div>
   </section>
 

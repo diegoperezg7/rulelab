@@ -6,9 +6,10 @@ import math
 from pathlib import Path
 
 from jinja2 import Environment, PackageLoader, select_autoescape
+from markupsafe import Markup, escape
 
 from . import __version__
-from .analysis import Analysis, file_monthly_usd
+from .analysis import Analysis, file_monthly_usd, file_tokens_per_run
 from .configs import FULL, NONE
 
 VERDICT_LABELS = {
@@ -54,6 +55,44 @@ def usd(x: float | None, digits: int = 2) -> str:
     if 0 < abs(x) < 10 ** (-digits):
         return f"<{10 ** (-digits):.{digits}f}"
     return f"{x:,.{digits}f}"
+
+
+def _es(text: str) -> str:
+    """English-formatted number -> Spanish (1,953.5 -> 1.953,5)."""
+    return text.replace(",", "\0").replace(".", ",").replace("\0", ".")
+
+
+def _both(en: str, es: str) -> Markup:
+    return Markup('<span lang="en">%s</span><span lang="es">%s</span>') % (escape(en), escape(es))
+
+
+def b_num(x: float | None, digits: int = 0) -> Markup:
+    if x is None or not _num(x):
+        return _both("n/a", "n/d")
+    en = f"{x:,.{digits}f}"
+    return _both(en, _es(en))
+
+
+def b_signed_int(x: float | None) -> Markup:
+    en = signed_int(x)
+    return _both(en, "n/d" if en == "n/a" else _es(en))
+
+
+def b_usd(x: float | None, digits: int = 2) -> Markup:
+    en = usd(x, digits)
+    if en == "n/a":
+        return _both("n/a", "n/d")
+    return _both(f"{en} USD", f"{_es(en)} US$")
+
+
+def b_pct(x: float | None) -> Markup:
+    en = pct(x)
+    return _both(en, "n/d" if en == "n/a" else en.replace("%", "\u00a0%"))
+
+
+def b_plain(x) -> Markup:
+    en = str(x)
+    return _both(en, _es(en))
 
 
 def ci_bar(low: float, high: float, est: float, margin: float, width: int = 168) -> dict:
@@ -110,7 +149,7 @@ def render_report(a: Analysis, *, recorded_note: dict | None = None) -> str:
         trim_blocks=True,
         lstrip_blocks=True,
     )
-    env.filters.update(pp=pp, pct=pct, usd=usd, signed_int=signed_int)
+    env.filters.update(pp=pp, pct=b_pct, usd=b_usd, signed_int=b_signed_int, num=b_num, plain=b_plain)
     res = a.results
     configs = []
     for c in res["configs"]:
@@ -151,6 +190,7 @@ def render_report(a: Analysis, *, recorded_note: dict | None = None) -> str:
         full_rate=a.rates.get(FULL),
         none_rate=a.rates.get(NONE),
         file_monthly=file_monthly_usd(a),
+        file_per_run=file_tokens_per_run(a),
         total_runs=len(res["runs"]),
         planned_runs=len(res["configs"]) * len(res["tasks"]) * res["repeats"],
         recorded=recorded_note,

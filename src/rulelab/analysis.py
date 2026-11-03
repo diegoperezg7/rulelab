@@ -12,6 +12,7 @@ from .stats import DEFAULT_MARGIN, Effect, MeanCI, metric_delta, success_effect,
 # Claude Sonnet 5.5 input list price on OpenRouter, checked 3 Nov 2026 (USD per 1M tokens).
 REFERENCE_PRICE_IN = 2.0
 REFERENCE_PRICE_LABEL = "Claude Sonnet 5.5 input price on OpenRouter (3 Nov 2026)"
+REFERENCE_PRICE_LABEL_ES = "precio de entrada de Claude Sonnet 5.5 en OpenRouter (3 nov 2026)"
 DEFAULT_SESSIONS_PER_MONTH = 1000
 
 
@@ -47,6 +48,7 @@ class Analysis:
     mean_turns: float
     price_in: float
     price_label: str
+    price_label_es: str
     sessions_per_month: int
     margin: float
     errors: int
@@ -106,10 +108,12 @@ def analyze(
         model_price = _model_price_in(results)
         if model_price > 0:
             price_in, price_label = model_price, f"{results.get('model')} input price"
+            price_label_es = f"precio de entrada de {results.get('model')}"
         else:
             price_in, price_label = REFERENCE_PRICE_IN, REFERENCE_PRICE_LABEL
+            price_label_es = REFERENCE_PRICE_LABEL_ES
     else:
-        price_label = "--price-in"
+        price_label = price_label_es = "--price-in"
 
     rules: list[RuleResult] = []
     for i, rd in enumerate(results["file"]["rules"]):
@@ -152,11 +156,17 @@ def analyze(
         mean_turns=mean_turns,
         price_in=price_in,
         price_label=price_label,
+        price_label_es=price_label_es,
         sessions_per_month=sessions_per_month,
         margin=margin,
         errors=errors,
         counts=counts,
     )
+
+
+def file_tokens_per_run(a: Analysis) -> float:
+    """Estimated input tokens the file adds per run if it is resent on every model call."""
+    return a.results["file"]["tokens"] * a.mean_turns
 
 
 def file_monthly_usd(a: Analysis) -> float:

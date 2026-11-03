@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] - 2026-11-03
+
+### Fixed
+- Report: numbers follow the active language (ES `1.953`, `0,23 US$`; EN `1,953`, `0.23 USD`).
+- Report: the cost-projection footnote is fully translated.
+- Report, terminal summary and docs: the estimated tokens per run (file resent on every call) and the measured
+  difference against no file are shown as two separate, named figures.
+
 ## [0.1.0] - 2026-11-03
 
 ### Added

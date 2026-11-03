@@ -1,6 +1,6 @@
 [project]
 name = "rulelab"
-version = "0.1.0"
+version = "0.1.1"
 description = "Find out which lines of your AGENTS.md earn their tokens. Remove one rule at a time and measure success and cost on real tasks."
 readme = "README.md"
 license = "MIT"

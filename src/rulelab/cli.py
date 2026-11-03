@@ -16,7 +16,7 @@ from rich.console import Console
 from rich.table import Table
 
 from . import __version__
-from .analysis import DEFAULT_SESSIONS_PER_MONTH, Analysis, analyze
+from .analysis import DEFAULT_SESSIONS_PER_MONTH, Analysis, analyze, file_tokens_per_run
 from .errors import RulelabError
 from .experiment import BudgetError, check_budget, execute, load, make_plan, new_results
 from .report import VERDICT_LABELS, pp, signed_int, usd, write_report
@@ -101,12 +101,14 @@ def print_summary(a: Analysis) -> None:
             w = a.whole_file
             line += f" · file effect {pp(w.estimate)} pp [{pp(w.low)}, {pp(w.high)}]"
         console.print(line)
+    est = f"file tokens per run, estimated if resent on every call: ≈{file_tokens_per_run(a):,.0f}"
     if a.whole_file_tokens and a.whole_file_tokens.n:
         t = a.whole_file_tokens
-        console.print(
-            f"full file vs no file: {signed_int(t.mean)} input tokens per run "
+        est += (
+            f" · measured difference vs no file: {signed_int(t.mean)} "
             f"[{signed_int(t.low)}, {signed_int(t.high)}]"
         )
+    console.print(est)
     table = Table(show_lines=False, title_justify="left")
     table.add_column("rule", overflow="fold")
     table.add_column("≈tok", justify="right")

@@ -52,7 +52,7 @@ Estrellas comprobadas con la API de GitHub el 3 nov 2026.
 Mira una ejecución real grabada (sin API key, sin Docker, en menos de un minuto):
 
 ```bash
-uvx --from git+https://github.com/diegoperezg7/rulelab@v0.1.0 rulelab demo --open
+uvx --from git+https://github.com/diegoperezg7/rulelab@v0.1.1 rulelab demo --open
 ```
 
 o desde un clon:
@@ -79,7 +79,7 @@ $ rulelab demo
 Recorded run · real results from rulelab run on 2026-11-03 · rulelab 0.1.0 · Darwin arm64 (Apple M4, 16 GB RAM)
 AGENTS.md · model mistral/ministral-14b-latest · 4 tasks × 2 repeats × 8 configs · 64 runs · 0.7376 USD
 full file 2/8 · no file 1/8 · file effect +12 pp [−21, +39]
-full file vs no file: +776 input tokens per run [−15,405, +17,616]
+file tokens per run, estimated if resent on every call: ≈4,305 · measured difference vs no file: +776 [−15,405, +17,616]
  rule                    ≈tok   effect (pp, 95% CI)   verdict        USD/month
  R1 Repository overview    88        +12 [−21, +41]   inconclusive        0.23
  R2 Running tests          47          0 [−26, +25]   inconclusive        0.12
@@ -104,7 +104,7 @@ Pasaron 13 de 64 ejecuciones. El fichero completo pasó 2/8 y sin fichero 1/8 (+
 acierto de 2/8 a 1/8, pero con 4 tareas y 2 repeticiones eso es una sola ejecución de diferencia:
 **todas las reglas salen no concluyentes**, y el informe lo dice en vez de forzar un veredicto. Lo
 que sí deja claro es el precio: el fichero son ≈328 tokens reenviados en cada una de las ~13
-llamadas al modelo, unos 4.300 tokens de entrada por ejecución. Para tener un veredicto, usa más
+llamadas al modelo; reenviado en cada una sumaría ≈4.305 tokens de entrada por ejecución estimados. La diferencia medida de verdad en esta ejecución (fichero completo frente a sin fichero) fue de +776 tokens de entrada por ejecución, con un intervalo amplio, porque las trayectorias del agente varían mucho más que eso. Para tener un veredicto, usa más
 tareas y repeticiones sobre tu propio repo.
 
 Una ejecución anterior más grande (144 ejecuciones con codestral sobre una versión previa de

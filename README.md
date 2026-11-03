@@ -52,7 +52,7 @@ Star counts checked with the GitHub API on 3 Nov 2026.
 See a recorded real run (no API key, no Docker, under a minute):
 
 ```bash
-uvx --from git+https://github.com/diegoperezg7/rulelab@v0.1.0 rulelab demo --open
+uvx --from git+https://github.com/diegoperezg7/rulelab@v0.1.1 rulelab demo --open
 ```
 
 or from a clone:
@@ -79,7 +79,7 @@ $ rulelab demo
 Recorded run · real results from rulelab run on 2026-11-03 · rulelab 0.1.0 · Darwin arm64 (Apple M4, 16 GB RAM)
 AGENTS.md · model mistral/ministral-14b-latest · 4 tasks × 2 repeats × 8 configs · 64 runs · 0.7376 USD
 full file 2/8 · no file 1/8 · file effect +12 pp [−21, +39]
-full file vs no file: +776 input tokens per run [−15,405, +17,616]
+file tokens per run, estimated if resent on every call: ≈4,305 · measured difference vs no file: +776 [−15,405, +17,616]
  rule                    ≈tok   effect (pp, 95% CI)   verdict        USD/month
  R1 Repository overview    88        +12 [−21, +41]   inconclusive        0.23
  R2 Running tests          47          0 [−26, +25]   inconclusive        0.12
@@ -103,7 +103,7 @@ most recent tasks of commitarena's own demo set: bug fixes from
 Removing the repository overview or the bug-fixing rule dropped success from 2/8 to 1/8, but with
 4 tasks and 2 repeats that is one run's difference: **every rule is inconclusive**, and the report
 says so instead of forcing a verdict. What the run does pin down is the price: the file is ≈328
-tokens resent on each of ~13 model calls, about 4,300 input tokens per run. To get a verdict,
+tokens; resent on each of ~13 model calls it would add an estimated ≈4,305 input tokens per run. The difference actually measured in this run (full file vs no file) was +776 input tokens per run, with a wide interval, because agent trajectories vary far more than that. To get a verdict,
 run more tasks and repeats on your own repo.
 
 An earlier, larger run (144 runs with codestral on an older commitarena build) solved 1 of 144

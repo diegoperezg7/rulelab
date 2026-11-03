@@ -217,7 +217,7 @@ footer { border-top: 1px solid var(--border); padding: 20px 0 32px; font-size: 1
     <span>{{ t("Configurations", "Configuraciones") }} <b>{{ res.configs|length }}</b></span>
     <span>{{ t("Agent runs", "Ejecuciones") }} <b>{{ total_runs }}/{{ planned_runs }}</b></span>
     <span>{{ t("Split by", "Partido por") }} <b>{{ t(res.file.granularity, "sección" if res.file.granularity == "section" else "viñeta") }}</b></span>
-    <span>{{ t("Spent", "Gastado") }} <b class="num">{{ res.spent_usd|usd(4) }} USD</b>{% if res.meta.price_source %} <span title="{{ res.meta.cost_method }}">({{ res.meta.price_in_per_mtok }}/{{ res.meta.price_out_per_mtok }} USD {{ t("per 1M tokens in/out", "por 1M tokens entrada/salida") }}, {{ res.meta.price_source }})</span>{% endif %}</span>
+    <span>{{ t("Spent", "Gastado") }} <b class="num">{{ res.spent_usd|usd(4) }}</b>{% if res.meta.price_source %} <span title="{{ res.meta.cost_method }}">({{ res.meta.price_in_per_mtok|plain }}/{{ res.meta.price_out_per_mtok|plain }} {{ t("USD per 1M tokens in/out", "US$ por 1M de tokens de entrada/salida") }}, {{ res.meta.price_source }})</span>{% endif %}</span>
     {% if res.meta.engine %}<span>{{ t("Engine", "Motor") }} <b>{{ res.meta.engine }}</b></span>{% endif %}
   </div>
 
@@ -234,9 +234,9 @@ footer { border-top: 1px solid var(--border); padding: 20px 0 32px; font-size: 1
     </div>
     <div class="card kpi">
       <div class="label">{{ t("File size", "Tamaño del fichero") }}</div>
-      <div class="value num">≈{{ "{:,}".format(res.file.tokens) }} <span style="font-size:14px;font-weight:500" class="muted">tok</span></div>
-      <div class="sub">{{ t("resent on each of", "reenviado en cada una de") }} ~{{ "%.1f"|format(a.mean_turns) }} {{ t("model calls per run", "llamadas al modelo por ejecución") }}{% if a.whole_file_tokens and a.whole_file_tokens.n %}.
-        {{ t("Measured vs no file:", "Medido frente a sin fichero:") }} <span class="num">{{ a.whole_file_tokens.mean|signed_int }} tok/{{ t("run", "ejec.") }}</span>{% endif %}</div>
+      <div class="value num">≈{{ res.file.tokens|num }} <span style="font-size:14px;font-weight:500" class="muted">tok</span></div>
+      <div class="sub">{{ t("Estimated", "Estimado") }} <span class="num">≈{{ file_per_run|num }} tok/{{ t("run", "ejec.") }}</span> {{ t("if resent on each of", "si se reenvía en cada una de las") }} ~{{ a.mean_turns|num(1) }} {{ t("model calls", "llamadas al modelo") }}.{% if a.whole_file_tokens and a.whole_file_tokens.n %}
+        {{ t("Measured difference vs no file in this run:", "Diferencia medida frente a sin fichero en esta ejecución:") }} <span class="num">{{ a.whole_file_tokens.mean|signed_int }} tok/{{ t("run", "ejec.") }}</span>{% endif %}</div>
     </div>
     <div class="card kpi">
       <div class="label">{{ t("Verdicts", "Veredictos") }}</div>
@@ -295,21 +295,21 @@ footer { border-top: 1px solid var(--border); padding: 20px 0 32px; font-size: 1
       </div>
       <div class="c-verdict">{{ chip(r.success.verdict) }}</div>
       <div class="c-delta right num"><span class="mlabel">{{ t("Input tok/run", "Tok entrada/ejec.") }} </span>{{ r.input_tokens.mean|signed_int }}</div>
-      <div class="c-month right num"><span class="mlabel">{{ t("Per month", "Al mes") }} </span>{{ r.monthly_usd|usd }} USD</div>
+      <div class="c-month right num"><span class="mlabel">{{ t("Per month", "Al mes") }} </span>{{ r.monthly_usd|usd }}</div>
     </div>
     {% endfor %}
   </div>
   <p class="lede" style="margin-top:12px;font-size:13px">
     {{ t("Tokens are approximate (characters / 4). \"Input tok/run\" is the measured difference in input tokens per run with and without the rule; it also moves when the agent takes a different path. \"Per month\" is the rule's tokens × model calls per run ×",
       "Los tokens son aproximados (caracteres / 4). «Tok entrada/ejec.» es la diferencia medida de tokens de entrada por ejecución con y sin la regla; también cambia cuando el agente toma otro camino. «Al mes» es tokens de la regla × llamadas al modelo por ejecución ×") }}
-    {{ "{:,}".format(a.sessions_per_month) }} {{ t("sessions at", "sesiones a") }} {{ a.price_in }} USD / 1M tok ({{ a.price_label }}){{ t(", without prompt caching.", ", sin caché de prompt.") }}
-    {{ t("The whole file:", "El fichero entero:") }} <span class="num">{{ file_monthly|usd }} USD</span>.
+    {{ a.sessions_per_month|num }} {{ t("sessions at", "sesiones a") }} {{ a.price_in|plain }} {{ t("USD / 1M tok", "US$ / 1M tok") }} ({{ t(a.price_label, a.price_label_es) }}){{ t(", without prompt caching.", ", sin caché de prompt.") }}
+    {{ t("The whole file:", "El fichero entero:") }} <span class="num">{{ file_monthly|usd }}</span>.
   </p>
 
   <h2>{{ t("Annotated file", "Fichero anotado") }}</h2>
   <p class="lede">{{ t("Every rule as it appears in the file, with its verdict. Grey lines are kept in every configuration.", "Cada regla tal como aparece en el fichero, con su veredicto. Las líneas en gris se mantienen en todas las configuraciones.") }}</p>
   <div class="card file">
-    <div class="file-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span class="mono">{{ res.file.path }}</span><span class="muted">≈{{ "{:,}".format(res.file.tokens) }} tok</span></div>
+    <div class="file-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span class="mono">{{ res.file.path }}</span><span class="muted">≈{{ res.file.tokens|num }} tok</span></div>
     {% for b in blocks %}
     {% if b.rule %}{% set r = b.rule %}
     <div class="block rule v-{{ r.success.verdict }}" id="{{ r.id }}">
@@ -326,14 +326,14 @@ footer { border-top: 1px solid var(--border); padding: 20px 0 32px; font-size: 1
   <p class="lede">{{ t("Raw success per configuration, pooled over tasks.", "Acierto bruto por configuración, sumando todas las tareas.") }}</p>
   <div class="card tablewrap">
     <table>
-      <thead><tr><th>{{ t("Configuration", "Configuración") }}</th><th class="num">{{ t("Success", "Acierto") }}</th><th class="num">{{ t("Runs", "Ejec.") }}</th><th class="num">{{ t("Input tok/run", "Tok entrada/ejec.") }}</th><th class="num">USD/{{ t("run", "ejec.") }}</th></tr></thead>
+      <thead><tr><th>{{ t("Configuration", "Configuración") }}</th><th class="num">{{ t("Success", "Acierto") }}</th><th class="num">{{ t("Runs", "Ejec.") }}</th><th class="num">{{ t("Input tok/run", "Tok entrada/ejec.") }}</th><th class="num">{{ t("USD/run", "US$/ejec.") }}</th></tr></thead>
       <tbody>
       {% for c in configs %}
         <tr>
           <td>{% if c.id == "none" %}{{ t("No file", "Sin fichero") }}{% elif c.id == "full" %}{{ t("Full file", "Fichero completo") }}{% else %}{{ t("Without", "Sin") }} <span class="mono">{{ c.removed }}</span>{% endif %}</td>
           <td class="num">{{ c.rate|pct }} <span class="muted">({{ c.s }}/{{ c.n }})</span></td>
           <td class="num">{{ c.n }}/{{ c.planned }}</td>
-          <td class="num">{{ "{:,.0f}".format(c.tokens) if c.tokens == c.tokens else "n/a" }}</td>
+          <td class="num">{{ c.tokens|num }}</td>
           <td class="num">{{ c.cost|usd(4) }}</td>
         </tr>
       {% endfor %}

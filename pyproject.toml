@@ -1,0 +1,58 @@
+[project]
+name = "rulelab"
+version = "0.1.0"
+description = "Find out which lines of your AGENTS.md earn their tokens. Remove one rule at a time and measure success and cost on real tasks."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Diego Pérez" }]
+requires-python = ">=3.11"
+keywords = ["agents", "agents-md", "claude-md", "llm", "evaluation", "ablation", "coding-agents"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Testing",
+]
+dependencies = [
+  "commitarena",
+  "jinja2==3.1.6",
+  "rich==15.0.0",
+  "typer==0.27.3",
+]
+
+[project.urls]
+Homepage = "https://diegoperezg7.github.io/rulelab/"
+Repository = "https://github.com/diegoperezg7/rulelab"
+Issues = "https://github.com/diegoperezg7/rulelab/issues"
+
+[project.scripts]
+rulelab = "rulelab.cli:main"
+
+[dependency-groups]
+dev = ["pytest==9.2.0"]
+
+[build-system]
+requires = ["hatchling==1.33.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rulelab"]
+
+# [tool.hatch.build.targets.wheel.force-include]  # enabled once the demo is recorded
+# "examples/demo/results.json" = "rulelab/_demo/results.json"
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "examples", "README.md", "README.es.md", "LICENSE", "CHANGELOG.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["docker: needs a running Docker daemon (Linux CI only)"]
+
+[tool.uv.sources]
+commitarena = { path = "../commitarena", editable = true }

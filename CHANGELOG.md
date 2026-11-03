@@ -19,6 +19,6 @@ All notable changes to this project are documented here. The format follows
 - `rulelab demo`: a recorded real run on the commitarena demo tasks.
 
 ### Notes
-- rulelab depends on `commitarena` from its GitHub tag (`v0.1.0`). PyPI rejects direct URL
+- rulelab depends on `commitarena` from its GitHub tag (`v0.1.1`). PyPI rejects direct URL
   dependencies, so that dependency moves to the PyPI release once commitarena is published there,
   and rulelab is published to PyPI after that.

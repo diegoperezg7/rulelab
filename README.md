@@ -14,7 +14,9 @@ Remove one rule at a time and measure success and cost on real tasks.</p>
 
 <p align="center"><a href="README.es.md">Leer en español</a> · <a href="https://diegoperezg7.github.io/rulelab/">Example report</a></p>
 
-<!-- DEMO_IMAGE -->
+<p align="center"><img src="docs/assets/demo.gif" alt="rulelab split and rulelab demo in a terminal" width="820"></p>
+
+<p align="center"><a href="https://diegoperezg7.github.io/rulelab/"><img src="docs/assets/report-light.png" alt="rulelab HTML report" width="820"></a></p>
 
 ## Why
 
@@ -72,7 +74,42 @@ rulelab run AGENTS.md --repo . --model mistral/codestral-latest --max-cost 5
 
 ## Example output
 
-<!-- DEMO_OUTPUT -->
+```text
+$ rulelab demo
+Recorded run · real results from rulelab run on 2026-11-03 · rulelab 0.1.0 · Darwin arm64 (Apple M4, 16 GB RAM)
+AGENTS.md · model mistral/codestral-latest · 6 tasks × 3 repeats × 8 configs · 144 runs · 5.1760 USD
+full file 0/18 · no file 0/18 · file effect 0 pp [−17, +17]
+full file vs no file: +6,031 input tokens per run [−31,130, +36,229]
+ rule                    ≈tok   effect (pp, 95% CI)   verdict        USD/month
+ R1 Repository overview    88          0 [−17, +17]   inconclusive        0.35
+ R2 Running tests          47          0 [−17, +17]   inconclusive        0.19
+ R3 How to fix a bug       56          0 [−17, +16]   inconclusive        0.22
+ R4 Lexer and keywords     68          0 [−16, +17]   inconclusive        0.27
+ R5 Code style             34         −6 [−24, +15]   inconclusive        0.13
+ R6 Communication          30          0 [−17, +17]   inconclusive        0.12
+Floor effect: only 1% of all runs passed. [...] only the cost columns are informative.
+```
+
+**What this recorded run says, plainly.** The demo is a real `rulelab run` of a 6-rule
+[AGENTS.md](examples/demo/AGENTS.md) (it includes a repository overview, as in the paper) on 6
+bug-fix tasks mined by commitarena from [sqlparse](https://github.com/andialbrecht/sqlparse)
+([tasks.json](examples/demo/tasks.json); 3 of them are also in commitarena's own demo set), with
+`mistral/codestral-latest`, 15 agent steps and 3 repeats: 144 agent runs, 5.18 USD.
+
+Codestral solved 1 of 144 attempts. It also solved 0 of 11 in
+[commitarena's demo](https://github.com/diegoperezg7/commitarena), so these tasks are simply too hard
+for it at 15 steps. With success stuck at the floor, no rule can show an effect on success, and
+rulelab says exactly that: every rule is **inconclusive** and the report flags a **floor effect**
+instead of inventing a verdict. What the run does measure is cost: the file is ≈328 tokens resent on
+each of ~13 model calls per run, about 4,300 input tokens per run that bought no measurable success.
+It is the paper's finding (context costs tokens and does not reliably help) reproduced on one repo,
+and also the most common outcome you should expect from a small experiment.
+To get a verdict on success, run it with a model that solves some but not all of your tasks.
+
+The full report, with the annotated file, is published at
+**[diegoperezg7.github.io/rulelab](https://diegoperezg7.github.io/rulelab/)** (EN/ES, light/dark).
+Screenshots: [light](docs/assets/report-light.png) · [dark](docs/assets/report-dark.png) ·
+[mobile](docs/assets/report-mobile.png).
 
 ## How it works
 
@@ -139,6 +176,11 @@ or repeats before deleting a rule because of it.
 Before anything runs, rulelab prints the number of agent runs and the estimated cost. If the
 estimate is over `--max-cost`, it stops and tells you the amount to pass instead. Nothing is spent
 until you allow it.
+
+**Small local models.** Ollama serves models with a 4,096-token context by default. An agent run
+needs far more, and in our test `qwen3:4b` used up that window thinking and never ran a command.
+Start Ollama with a bigger window (for example `OLLAMA_CONTEXT_LENGTH=32768 ollama serve`) before
+using a local model.
 
 **Keys** come only from environment variables: `MISTRAL_API_KEY`, `OPENROUTER_API_KEY`,
 `OPENAI_API_KEY` (see [.env.example](.env.example)). Ollama needs none (`OLLAMA_HOST` to point

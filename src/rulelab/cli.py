@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import signal
 import sys
 import tempfile
 import webbrowser
@@ -18,7 +19,7 @@ from . import __version__
 from .analysis import DEFAULT_SESSIONS_PER_MONTH, Analysis, analyze
 from .errors import RulelabError
 from .experiment import BudgetError, check_budget, execute, load, make_plan, new_results
-from .report import VERDICT_LABELS, pp, usd, write_report
+from .report import VERDICT_LABELS, pp, signed_int, usd, write_report
 from .rules import load_rules
 
 app = typer.Typer(
@@ -100,6 +101,12 @@ def print_summary(a: Analysis) -> None:
             w = a.whole_file
             line += f" · file effect {pp(w.estimate)} pp [{pp(w.low)}, {pp(w.high)}]"
         console.print(line)
+    if a.whole_file_tokens and a.whole_file_tokens.n:
+        t = a.whole_file_tokens
+        console.print(
+            f"full file vs no file: {signed_int(t.mean)} input tokens per run "
+            f"[{signed_int(t.low)}, {signed_int(t.high)}]"
+        )
     table = Table(show_lines=False, title_justify="left")
     table.add_column("rule", overflow="fold")
     table.add_column("≈tok", justify="right")
@@ -120,6 +127,17 @@ def print_summary(a: Analysis) -> None:
         f"[dim]USD/month = rule tokens × {a.mean_turns:.1f} model calls/run × {a.sessions_per_month:,} sessions "
         f"at {a.price_in} USD/1M input tokens ({a.price_label}). Tokens ≈ chars/4.[/]"
     )
+    if a.floor_or_ceiling == "floor":
+        console.print(
+            f"[yellow]Floor effect:[/] only {a.overall_rate:.0%} of all runs passed. This model rarely solves these "
+            "tasks with or without the file, so success cannot show what a rule does; only the cost columns are "
+            "informative. Use a stronger model, more steps or easier tasks."
+        )
+    elif a.floor_or_ceiling == "ceiling":
+        console.print(
+            f"[yellow]Ceiling effect:[/] {a.overall_rate:.0%} of all runs passed. The tasks are too easy for this "
+            "model to show what a rule does; only the cost columns are informative. Use harder tasks."
+        )
     if a.low_power:
         console.print(
             "[yellow]Small sample:[/] most rules are inconclusive. Only large effects can be told apart "
@@ -237,6 +255,10 @@ def run(
         extra = f"{rec['duration_s']:.0f}s · {rec['input_tokens']:,} tok in · {rec['cost_usd']:.4f} USD"
         console.print(f"[dim]{i:>4}/{total}[/] {rec['config']:<12} {rec['task']:<32} #{rec['repeat']} {mark} [dim]{extra}[/]")
 
+    def _term(signum, frame):  # treat SIGTERM like Ctrl-C: stop cleanly, keep what was measured
+        raise KeyboardInterrupt
+
+    signal.signal(signal.SIGTERM, _term)
     try:
         results = execute(plan, runner, results, results_path, max_cost, on_run=progress)
     except RulelabError as e:

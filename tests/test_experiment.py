@@ -94,3 +94,13 @@ def test_results_json_is_serialisable(rf, tmp_path):
     res = new_results(rf, plan, runner, 1)
     json.dumps(res)
     assert res["file"]["rules"][0]["id"] == "R1"
+
+
+def test_floor_effect_is_flagged(rf, tmp_path):
+    runner = FakeRunner(tasks=["a", "b"], base_rate=0.0)
+    plan = make_plan(rf, runner, repeats=2)
+    res = execute(plan, runner, new_results(rf, plan, runner, 5), tmp_path / "r.json", 5)
+    a = analyze(res)
+    assert a.floor_or_ceiling == "floor"
+    assert all(r.success.verdict == "inconclusive" for r in a.rules)
+    assert "Floor effect" in render_report(a)

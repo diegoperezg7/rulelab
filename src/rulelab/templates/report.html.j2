@@ -235,7 +235,8 @@ footer { border-top: 1px solid var(--border); padding: 20px 0 32px; font-size: 1
     <div class="card kpi">
       <div class="label">{{ t("File size", "Tamaño del fichero") }}</div>
       <div class="value num">≈{{ "{:,}".format(res.file.tokens) }} <span style="font-size:14px;font-weight:500" class="muted">tok</span></div>
-      <div class="sub">{{ t("resent on each of", "reenviado en cada una de") }} ~{{ "%.1f"|format(a.mean_turns) }} {{ t("model calls per run", "llamadas al modelo por ejecución") }}</div>
+      <div class="sub">{{ t("resent on each of", "reenviado en cada una de") }} ~{{ "%.1f"|format(a.mean_turns) }} {{ t("model calls per run", "llamadas al modelo por ejecución") }}{% if a.whole_file_tokens and a.whole_file_tokens.n %}.
+        {{ t("Measured vs no file:", "Medido frente a sin fichero:") }} <span class="num">{{ a.whole_file_tokens.mean|signed_int }} tok/{{ t("run", "ejec.") }}</span>{% endif %}</div>
     </div>
     <div class="card kpi">
       <div class="label">{{ t("Verdicts", "Veredictos") }}</div>
@@ -244,6 +245,19 @@ footer { border-top: 1px solid var(--border); padding: 20px 0 32px; font-size: 1
     </div>
   </section>
 
+  {% if a.floor_or_ceiling == "floor" %}
+  <div class="notice" role="note">
+    <strong>{{ t("Floor effect.", "Efecto suelo.") }}</strong>
+    {{ t("Only", "Solo pasó el") }} {{ a.overall_rate|pct }} {{ t("of all runs passed. This model rarely solves these tasks with or without the file, so success cannot show what a rule does: every verdict below is inconclusive for that reason. The token and cost columns are still real measurements. To learn about success, use a stronger model, more --max-steps or easier tasks.",
+      "de todas las ejecuciones. Este modelo casi nunca resuelve estas tareas, con o sin fichero, así que el acierto no puede mostrar qué hace cada regla: por eso todos los veredictos salen no concluyentes. Las columnas de tokens y coste sí son mediciones reales. Para saber algo del acierto, usa un modelo más fuerte, más --max-steps o tareas más fáciles.") }}
+  </div>
+  {% elif a.floor_or_ceiling == "ceiling" %}
+  <div class="notice" role="note">
+    <strong>{{ t("Ceiling effect.", "Efecto techo.") }}</strong>
+    {{ a.overall_rate|pct }} {{ t("of all runs passed. The tasks are too easy for this model to show what a rule does. The token and cost columns are still real measurements.",
+      "de las ejecuciones pasaron. Las tareas son demasiado fáciles para este modelo como para ver qué hace cada regla. Las columnas de tokens y coste sí son mediciones reales.") }}
+  </div>
+  {% endif %}
   {% if a.low_power %}
   <div class="notice" role="note">
     <strong>{{ t("Small sample.", "Muestra pequeña.") }}</strong>

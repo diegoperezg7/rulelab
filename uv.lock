@@ -48,25 +48,12 @@ wheels = [
 
 [[package]]
 name = "commitarena"
-version = "0.1.0"
-source = { editable = "../commitarena" }
+version = "0.1.1"
+source = { git = "https://github.com/diegoperezg7/commitarena?rev=v0.1.1#42dbbdd52ed624794e0203a50f2c27f2f6d9e9d6" }
 dependencies = [
     { name = "openai" },
     { name = "rich" },
     { name = "typer" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "openai", specifier = "==3.42.1" },
-    { name = "rich", specifier = "==15.0.0" },
-    { name = "typer", specifier = "==0.27.3" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "pytest", specifier = "==9.2.0" },
-    { name = "ruff", specifier = "==0.17.3" },
 ]
 
 [[package]]
@@ -652,7 +639,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "commitarena", editable = "../commitarena" },
+    { name = "commitarena", git = "https://github.com/diegoperezg7/commitarena?rev=v0.1.1" },
     { name = "jinja2", specifier = "==3.1.6" },
     { name = "rich", specifier = "==15.0.0" },
     { name = "typer", specifier = "==0.27.3" },

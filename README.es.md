@@ -14,7 +14,9 @@ Quita una regla cada vez y mide acierto y coste en tareas reales.</p>
 
 <p align="center"><a href="README.md">Read in English</a> · <a href="https://diegoperezg7.github.io/rulelab/">Informe de ejemplo</a></p>
 
-<!-- DEMO_IMAGE -->
+<p align="center"><img src="docs/assets/demo.gif" alt="rulelab split y rulelab demo en un terminal" width="820"></p>
+
+<p align="center"><a href="https://diegoperezg7.github.io/rulelab/"><img src="docs/assets/report-light.png" alt="Informe HTML de rulelab" width="820"></a></p>
 
 ## Por qué
 
@@ -72,7 +74,44 @@ rulelab run AGENTS.md --repo . --model mistral/codestral-latest --max-cost 5
 
 ## Salida de ejemplo
 
-<!-- DEMO_OUTPUT -->
+```text
+$ rulelab demo
+Recorded run · real results from rulelab run on 2026-11-03 · rulelab 0.1.0 · Darwin arm64 (Apple M4, 16 GB RAM)
+AGENTS.md · model mistral/codestral-latest · 6 tasks × 3 repeats × 8 configs · 144 runs · 5.1760 USD
+full file 0/18 · no file 0/18 · file effect 0 pp [−17, +17]
+full file vs no file: +6,031 input tokens per run [−31,130, +36,229]
+ rule                    ≈tok   effect (pp, 95% CI)   verdict        USD/month
+ R1 Repository overview    88          0 [−17, +17]   inconclusive        0.35
+ R2 Running tests          47          0 [−17, +17]   inconclusive        0.19
+ R3 How to fix a bug       56          0 [−17, +16]   inconclusive        0.22
+ R4 Lexer and keywords     68          0 [−16, +17]   inconclusive        0.27
+ R5 Code style             34         −6 [−24, +15]   inconclusive        0.13
+ R6 Communication          30          0 [−17, +17]   inconclusive        0.12
+Floor effect: only 1% of all runs passed. [...] only the cost columns are informative.
+```
+
+**Lo que dice esta ejecución grabada, sin adornos.** La demo es un `rulelab run` real de un
+[AGENTS.md](examples/demo/AGENTS.md) de 6 reglas (incluye una descripción general del repositorio,
+como en el paper) sobre 6 tareas de arreglo de bugs minadas por commitarena de
+[sqlparse](https://github.com/andialbrecht/sqlparse) ([tasks.json](examples/demo/tasks.json); 3 de
+ellas están también en la demo de commitarena), con `mistral/codestral-latest`, 15 pasos de agente y
+3 repeticiones: 144 ejecuciones, 5,18 USD.
+
+Codestral resolvió 1 de 144 intentos. En la [demo de commitarena](https://github.com/diegoperezg7/commitarena)
+también resolvió 0 de 11, así que estas tareas son demasiado difíciles para él con 15 pasos. Con el
+acierto pegado al suelo, ninguna regla puede mostrar efecto en el acierto, y rulelab lo dice tal
+cual: todas las reglas salen **no concluyentes** y el informe marca un **efecto suelo** en vez de
+inventarse un veredicto. Lo que sí mide la ejecución es el coste: el fichero son ≈328 tokens
+reenviados en cada una de las ~13 llamadas al modelo por ejecución, unos 4.300 tokens de entrada por
+ejecución que no compraron ningún acierto medible. Es lo que encontró el paper (el contexto cuesta
+tokens y no ayuda de forma fiable) reproducido en un repo, y también el resultado más habitual que
+cabe esperar de un experimento pequeño. Para tener un veredicto sobre el acierto, ejecútalo con un
+modelo que resuelva algunas de tus tareas, pero no todas.
+
+El informe completo, con el fichero anotado, está publicado en
+**[diegoperezg7.github.io/rulelab](https://diegoperezg7.github.io/rulelab/)** (EN/ES, claro/oscuro).
+Capturas: [claro](docs/assets/report-light.png) · [oscuro](docs/assets/report-dark.png) ·
+[móvil](docs/assets/report-mobile.png).
 
 ## Cómo funciona
 
@@ -140,6 +179,11 @@ Añade tareas (`--max-tasks`) o repeticiones antes de borrar una regla por eso.
 Antes de ejecutar nada, rulelab imprime el número de ejecuciones del agente y el coste estimado.
 Si la estimación supera `--max-cost`, se para y te dice qué cantidad pasar. No se gasta nada
 hasta que lo permites.
+
+**Modelos locales pequeños.** Ollama sirve los modelos con un contexto de 4.096 tokens por
+defecto. Una ejecución del agente necesita mucho más, y en nuestra prueba `qwen3:4b` gastó esa
+ventana pensando y nunca llegó a ejecutar un comando. Arranca Ollama con una ventana mayor (por
+ejemplo `OLLAMA_CONTEXT_LENGTH=32768 ollama serve`) antes de usar un modelo local.
 
 **Las claves** se leen solo de variables de entorno: `MISTRAL_API_KEY`, `OPENROUTER_API_KEY`,
 `OPENAI_API_KEY` (ver [.env.example](.env.example)). Ollama no necesita ninguna (`OLLAMA_HOST`

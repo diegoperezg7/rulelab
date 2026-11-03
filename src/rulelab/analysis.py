@@ -60,6 +60,24 @@ class Analysis:
         return out
 
     @property
+    def overall_rate(self) -> float:
+        s = sum(v[1] for v in self.rates.values())
+        n = sum(v[2] for v in self.rates.values())
+        return s / n if n else float("nan")
+
+    @property
+    def floor_or_ceiling(self) -> str | None:
+        """'floor' when almost nothing passes, 'ceiling' when almost everything does."""
+        r = self.overall_rate
+        if r != r:
+            return None
+        if r <= 0.05:
+            return "floor"
+        if r >= 0.95:
+            return "ceiling"
+        return None
+
+    @property
     def low_power(self) -> bool:
         return self.verdict_counts["inconclusive"] >= max(1, len(self.rules) // 2)
 

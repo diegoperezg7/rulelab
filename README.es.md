@@ -197,6 +197,16 @@ para apuntar a otro sitio). rulelab no envía telemetría.
 `rulelab report results.json` regenera el informe con otro `--margin`, `--price-in` o
 `--sessions-per-month` sin volver a ejecutar nada.
 
+## Úsalo desde Claude Code
+
+Instala el plugin y pídeselo a Claude con tus palabras; su skill `ablate-agent-rules` divide tu fichero, enseña la estimación de coste (gratis), lanza el experimento solo cuando lo apruebas y explica qué reglas ayudan, cuáles perjudican y cuáles aún no se pueden distinguir.
+
+```text
+/plugin install rulelab --marketplace diegoperezg7/rulelab
+```
+
+La skill indica a Claude que pregunte antes de cualquier ejecución de pago, y `--max-cost` sigue limitando el gasto.
+
 ## Hoja de ruta
 
 Fuera de la v0.1:

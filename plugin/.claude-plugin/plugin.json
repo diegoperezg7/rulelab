@@ -1,0 +1,10 @@
+{
+  "name": "rulelab",
+  "version": "0.1.1",
+  "description": "Find which rules of your AGENTS.md or CLAUDE.md help your coding agent and what each one costs in tokens, with a leave-one-out experiment on real bug fixes.",
+  "author": { "name": "Diego Pérez", "url": "https://github.com/diegoperezg7" },
+  "homepage": "https://github.com/diegoperezg7/rulelab",
+  "repository": "https://github.com/diegoperezg7/rulelab",
+  "license": "MIT",
+  "keywords": ["agents-md", "claude-md", "evaluation", "context-engineering", "ablation"]
+}

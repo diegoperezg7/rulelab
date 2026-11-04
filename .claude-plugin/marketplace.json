@@ -1,0 +1,11 @@
+{
+  "name": "rulelab",
+  "owner": { "name": "Diego Pérez", "url": "https://github.com/diegoperezg7" },
+  "plugins": [
+    {
+      "name": "rulelab",
+      "source": "./plugin",
+      "description": "Find which rules of your AGENTS.md or CLAUDE.md help your coding agent and what each one costs in tokens, with a leave-one-out experiment on real bug fixes."
+    }
+  ]
+}

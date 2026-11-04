@@ -208,6 +208,16 @@ Fuera de la v0.1:
 - Reescritura automática de reglas que cuestan más de lo que ayudan.
 - Publicación en PyPI (cuando commitarena esté en PyPI; PyPI no acepta la dependencia actual desde GitHub).
 
+## Parte de una serie
+
+Herramientas open source para medir agentes y LLMs con tus propios datos:
+
+- [memarena](https://github.com/diegoperezg7/memarena): Compara capas de memoria con tus propias conversaciones.
+- [parsearena](https://github.com/diegoperezg7/parsearena): Compara parsers de PDF lado a lado y su efecto en la recuperación.
+- [commitarena](https://github.com/diegoperezg7/commitarena): Reproduce fixes reales de tu historial de git con cualquier modelo.
+- [toolbloat](https://github.com/diegoperezg7/toolbloat): Mide el coste en tokens de tu pila MCP y los errores al elegir tool.
+- [doesitfire](https://github.com/diegoperezg7/doesitfire): Comprueba si tu SKILL.md se activa en Claude Code, Codex y OpenCode.
+
 ## Licencia
 
 [MIT](LICENSE) © 2026 Diego Pérez. Las tareas de la demo contienen código y tests de

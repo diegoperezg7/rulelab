@@ -206,6 +206,16 @@ Not in v0.1:
 - Automatic rewrites of rules that cost more than they help.
 - PyPI release (after commitarena is on PyPI; PyPI does not accept the current GitHub dependency).
 
+## Part of a series
+
+Open source tools that evaluate agents and LLMs on your own data:
+
+- [memarena](https://github.com/diegoperezg7/memarena): Benchmark memory layers on your own conversations.
+- [parsearena](https://github.com/diegoperezg7/parsearena): Compare PDF parsers side by side and their effect on retrieval.
+- [commitarena](https://github.com/diegoperezg7/commitarena): Replay real bug fixes from your git history against any model.
+- [toolbloat](https://github.com/diegoperezg7/toolbloat): Measure the token cost of your MCP stack and tool-choice errors.
+- [doesitfire](https://github.com/diegoperezg7/doesitfire): Test whether your SKILL.md activates in Claude Code, Codex and OpenCode.
+
 ## License
 
 [MIT](LICENSE) © 2026 Diego Pérez. The demo tasks contain code and tests from

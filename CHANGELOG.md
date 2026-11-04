@@ -4,7 +4,11 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.1.2] - 2026-11-04
+
+### Changed
+- Published on PyPI as `rulelab-cli` (the name `rulelab` is too close to an existing project). The command is still `rulelab`; `rulelab-cli` works too, so `uvx rulelab-cli` runs it.
+- Depends on `commitarena==0.1.1` from PyPI instead of its GitHub tag.
 
 ### Added
 - Claude Code plugin (`/plugin install rulelab --marketplace diegoperezg7/rulelab`) with the `ablate-agent-rules` skill.

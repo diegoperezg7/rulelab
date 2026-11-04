@@ -52,7 +52,7 @@ Star counts checked with the GitHub API on 3 Nov 2026.
 See a recorded real run (no API key, no Docker, under a minute):
 
 ```bash
-uvx --from git+https://github.com/diegoperezg7/rulelab@v0.1.1 rulelab demo --open
+uvx rulelab-cli demo --open
 ```
 
 or from a clone:
@@ -61,7 +61,7 @@ or from a clone:
 git clone https://github.com/diegoperezg7/rulelab && cd rulelab && uv run rulelab demo --open
 ```
 
-`uvx rulelab` is coming to PyPI.
+The PyPI package is `rulelab-cli` (the name `rulelab` is too close to an existing project there); the command is `rulelab`. Install it with `uv tool install rulelab-cli` or `pipx install rulelab-cli`.
 
 Then run it on your own file and repo (needs Docker, and Ollama or an API key):
 
@@ -214,7 +214,6 @@ Not in v0.1:
 - `.cursor/rules` and skills.
 - Rule interactions (removing pairs or groups).
 - Automatic rewrites of rules that cost more than they help.
-- PyPI release (after commitarena is on PyPI; PyPI does not accept the current GitHub dependency).
 
 ## Part of a series
 

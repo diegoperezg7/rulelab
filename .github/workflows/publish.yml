@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/rulelab
+      url: https://pypi.org/p/rulelab-cli
     permissions:
       id-token: write
     steps:

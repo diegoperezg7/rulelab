@@ -52,7 +52,7 @@ Estrellas comprobadas con la API de GitHub el 3 nov 2026.
 Mira una ejecución real grabada (sin API key, sin Docker, en menos de un minuto):
 
 ```bash
-uvx --from git+https://github.com/diegoperezg7/rulelab@v0.1.1 rulelab demo --open
+uvx rulelab-cli demo --open
 ```
 
 o desde un clon:
@@ -61,7 +61,7 @@ o desde un clon:
 git clone https://github.com/diegoperezg7/rulelab && cd rulelab && uv run rulelab demo --open
 ```
 
-`uvx rulelab` llegará pronto a PyPI.
+En PyPI el paquete se llama `rulelab-cli` (el nombre `rulelab` se parece demasiado a un proyecto que ya existe allí); el comando es `rulelab`. Instálalo con `uv tool install rulelab-cli` o `pipx install rulelab-cli`.
 
 Después, sobre tu propio fichero y repo (necesita Docker, y Ollama o una API key):
 
@@ -216,7 +216,6 @@ Fuera de la v0.1:
 - `.cursor/rules` y skills.
 - Interacciones entre reglas (quitar parejas o grupos).
 - Reescritura automática de reglas que cuestan más de lo que ayudan.
-- Publicación en PyPI (cuando commitarena esté en PyPI; PyPI no acepta la dependencia actual desde GitHub).
 
 ## Parte de una serie
 

@@ -14,8 +14,8 @@ its tokens and a projected monthly cost.
 
 1. Check the tools: `uv --version` and `docker info` must work (agent code runs in a Docker sandbox
    with no network). If Docker is not running, say so and stop.
-2. Use this command prefix everywhere (until rulelab is on PyPI):
-   `uvx --from git+https://github.com/diegoperezg7/rulelab@v0.1.1 rulelab`
+2. Use this command prefix everywhere, pinned to a release:
+   `uvx --from rulelab-cli==0.1.2 rulelab`
 3. To show what a result looks like first, with no keys, no Docker and no cost: `... rulelab demo`.
 
 ## Steps

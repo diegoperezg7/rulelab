@@ -49,11 +49,15 @@ wheels = [
 [[package]]
 name = "commitarena"
 version = "0.1.1"
-source = { git = "https://github.com/diegoperezg7/commitarena?rev=v0.1.1#42dbbdd52ed624794e0203a50f2c27f2f6d9e9d6" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "openai" },
     { name = "rich" },
     { name = "typer" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b9/34/b04dbadd30e7d1e761cb60f4eca4374ee09b606859759cca42e7f3ef5f17/commitarena-0.1.1.tar.gz", hash = "sha256:0f3cc1d4597c14cd612144b84d40d166b047d2afed335e2e36a32c000f96bd3b", size = 166382, upload-time = "2026-11-04T10:34:27.11Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/02/76/b4d80462e48f496e2f8ba346c0514c234628364df9a491e39d6de106142a/commitarena-0.1.1-py3-none-any.whl", hash = "sha256:fdc976f64a451b19aa5639207786ecb6820857c46a4b52f521ce29081f23fb9a", size = 162592, upload-time = "2026-11-04T10:34:25.598Z" },
 ]
 
 [[package]]
@@ -622,8 +626,8 @@ wheels = [
 ]
 
 [[package]]
-name = "rulelab"
-version = "0.1.1"
+name = "rulelab-cli"
+version = "0.1.2"
 source = { editable = "." }
 dependencies = [
     { name = "commitarena" },
@@ -639,7 +643,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "commitarena", git = "https://github.com/diegoperezg7/commitarena?rev=v0.1.1" },
+    { name = "commitarena", specifier = "==0.1.1" },
     { name = "jinja2", specifier = "==3.1.6" },
     { name = "rich", specifier = "==15.0.0" },
     { name = "typer", specifier = "==0.27.3" },

@@ -12,7 +12,7 @@ plainly when the sample is too small to tell.
 
 ## What it runs and sends
 
-- It runs `uvx --from git+https://github.com/diegoperezg7/rulelab@v0.1.1 rulelab`, pinned to a release
+- It runs `uvx --from rulelab-cli==0.1.2 rulelab` from PyPI, pinned to a release
   tag. Agent-written code runs in a Docker container with no network and CPU, memory and time limits.
 - Task descriptions, code context and your rules go only to the model provider you choose (Ollama
   locally, or a provider whose key you set in an environment variable). Keys are never written to files.

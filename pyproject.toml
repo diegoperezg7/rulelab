@@ -1,6 +1,6 @@
 [project]
-name = "rulelab"
-version = "0.1.1"
+name = "rulelab-cli"
+version = "0.1.2"
 description = "Find out which lines of your AGENTS.md earn their tokens. Remove one rule at a time and measure success and cost on real tasks."
 readme = "README.md"
 license = "MIT"
@@ -20,7 +20,7 @@ classifiers = [
   "Topic :: Software Development :: Testing",
 ]
 dependencies = [
-  "commitarena @ git+https://github.com/diegoperezg7/commitarena@v0.1.1",
+  "commitarena==0.1.1",
   "jinja2==3.1.6",
   "rich==15.0.0",
   "typer==0.27.3",
@@ -33,6 +33,7 @@ Issues = "https://github.com/diegoperezg7/rulelab/issues"
 
 [project.scripts]
 rulelab = "rulelab.cli:main"
+rulelab-cli = "rulelab.cli:main"
 
 [dependency-groups]
 dev = ["pytest==9.2.0"]
